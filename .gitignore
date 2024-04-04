@@ -1,0 +1,10 @@
+__pycache__
+.env
+data
+.idea
+*.db
+flaskapp/app/tests/files/tmp/*.pdf
+data
+.DS_Store
+.pytest_cache
+users.json

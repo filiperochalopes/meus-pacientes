@@ -1,0 +1,49 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+{
+    "name": "Python 3 & PostgreSQL",
+    "dockerComposeFile": "docker-compose.yml",
+    "service": "app",
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+    "features": {
+      "ghcr.io/devcontainers/features/git:1": {},
+      "ghcr.io/devcontainers/features/node:1": {},
+      "ghcr.io/devcontainers-contrib/features/prettier:1": {}
+    },
+  
+    // Features to add to the dev container. More info: https://containers.dev/features.
+    // "features": {},
+  
+    // Use 'forwardPorts' to make a list of ports inside the container available locally.
+    // This can be used to "network with other containers or the host.
+    "forwardPorts": [5000, 5432, 3000, "8080:80"],
+  
+    // Use 'postCreateCommand' to run commands after the container is created.
+    "postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",
+  
+    "remoteEnv": {
+      "FLASK_APP": "/workspaces/docs.filipelopes.med.br/api/app/__init__.py",
+      "PYTHONUNBUFFERED":"TRUE"
+    },
+  
+    // Configure tool-specific properties.
+    "customizations": {
+      "vscode": {
+        "extensions": [
+          "ms-python.python",
+          "vscode.vscode-typescript-next",
+          "esbenp.prettier-vscode",
+          "mohd-akram.vscode-html-format",
+          "styled-components.vscode-styled-components",
+          "graphql.vscode-graphql",
+          "ms-azuretools.vscode-docker",
+          "codeium.codeium",
+          "ms-python.autopep8"
+        ]
+      }
+    },
+  
+    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+    "remoteUser": "root"
+  }
+  
