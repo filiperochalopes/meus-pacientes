@@ -1,0 +1,8 @@
+mutation EditPrescriptionListItem {
+  editPrescriptionListItem(id:2, item:{
+    dosage: "Aqui vai nova dose X"
+  }){
+    id
+    dosage
+  }
+}

@@ -85,7 +85,7 @@ def seed():
     # Adicionando comorbidades
     comorbidities = [
         Comorbidity(name='diabetes', abbreviation='DM', description='Diabetes Mellitus Tipo 1 ou 2 (DM)'),
-        Comorbidity(name='hipertensão', abbreviation='HAS', value='Hipertensão Arterial Sistêmica (HAS)'),
+        Comorbidity(name='hipertensão', abbreviation='HAS', description='Hipertensão Arterial Sistêmica (HAS)'),
     ]
     db.session.bulk_save_objects(comorbidities)
 

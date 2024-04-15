@@ -1,7 +1,0 @@
-mutation{
-  printPdf_RelatorioAlta(
-    internmentId: 1
-  ){
-    base64Pdf
-  }
-}

@@ -1,6 +1,6 @@
 import sys
 from flask_marshmallow import Marshmallow
-from app.models import Patient, User, Cid10
+from app.models import Patient, User, Cid10, PrescriptionList
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
 
@@ -36,9 +36,9 @@ class ChildValueField(fields.Field):
         return value.value
 
 
-# class Cid10Schema(CamelCaseSchema):
-#     class Meta:
-#         model = Cid10
+class Cid10Schema(CamelCaseSchema):
+    class Meta:
+        model = Cid10
 
 
 class UserSchema(CamelCaseSchema):
@@ -48,15 +48,14 @@ class UserSchema(CamelCaseSchema):
         model = User
 
 
-# class PatientSchema(CamelCaseSchema):
-#     class Meta:
-#         model = Patient
-#         include_fk = True
+class PatientSchema(CamelCaseSchema):
+    class Meta:
+        model = Patient
+        include_fk = True
 
-#     sex = EnumToDictionaryField(attribute=('sex'))
-#     age = fields.Str(dump_only=True)
+    sex = EnumToDictionaryField(attribute=('sex'))
+    age = fields.Str(dump_only=True)
 
-
-# class Cid10Schema(CamelCaseSchema):
-#     class Meta:
-#         model = Cid10
+class PrescriptionListItemSchema(CamelCaseSchema):
+    class Meta:
+        model = PrescriptionList

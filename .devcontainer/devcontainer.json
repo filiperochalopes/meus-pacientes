@@ -22,7 +22,7 @@
     "postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",
   
     "remoteEnv": {
-      "FLASK_APP": "/workspaces/docs.filipelopes.med.br/api/app/__init__.py",
+      "FLASK_APP": "/workspaces/e-SUS-PEC-meus-pacientes/api/app/__init__.py",
       "PYTHONUNBUFFERED":"TRUE"
     },
   

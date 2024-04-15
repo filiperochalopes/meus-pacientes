@@ -1,106 +1,24 @@
-# Sistema de Evolução Clínica
+# Meus Pacientes
 
-Inicialmente criado com a ideia de ser um registro para acompanhamento de pacientes por médicos de um pronto atendimento, o conceito foi migrado ao notar a debilidade de um Hospital de Pequeno Porte em registrar as condutas de seus pacientes. Esse novo escopo visa ser responsável pela melhoria da comunicação e atenção da equipe.
+Uma aplicação para facilitar o gerenciamento de grupos na Atenção Básica. Sempre notei que as unidades de saúde que querem se organizar não conseguem suporte nos serviços fornecidos pelo SUS para as coisas mais simples.
 
-## Deploy em ambiente de homologação/produção
+Sem falar que a reponsividade desses sistemas não são boas e não atendem a demandas específicas, com esse ituito criei esse programa para gerenciar nossos pacientes, grupos, renovação de prescrições, dentre outros.
 
-1. (Opcional) Crie dentro da pasta app uma lista de usuários para cadastro/seed inicial
-2. Execute:
+# Roadmap
 
-```sh
-docker-compose down --volumes --remove-orphans
-rm -rf data
-docker-compose up -d
-make migrate
-make seed
-make users
-```
+- [ ] Criação de MVP com criação de items da lista em graphql playground evisualização com tabelas do [DataTable](https://primereact.org/datatable/)
+- [ ] Criação do sistema de usuários que os TACS possam registrar os exames que chegaram. Aqui também devemos criar:
+    - [ ] Módulo da Gestante, para mostrar a lista de nossas gestantes. Podendo ser acessada pelo hospital, co usuário específico dele. Integra com calc para verificar exames e épocas, bem como datas de eventos, integra com docs para fazer o cartão da gestante online e solicitar exames, integra com meuexa.me para ter acesso aos exames realizados. Criar documento solicitando permissão de uso para melhor controle dos dados pela paciente.
+- [ ] Lista de Comorbidades (Integração com eSUS Plugin - Adicionar na lista de comorbidades - via url, precisa estar logado) - Com opção também de atualizar lista de comorbidade. Atualiza data de última consulta via API. Plugin deve configurar chave para integrar. Como chave de identidade, para que possa ver qual a instituição que está usando. UserInstitutionKey
+- [ ] Adicionar na lista de Busca Ativa (Integração com eSUS Plugin)
+- [ ] Lista de Ticket Retorno (Integração com eSUS Plugin) - Quando expira ele sai da lista. Urgente expira com 60 dias, exames expira com 80 dias
+- [ ] Demanda de grupo. Anotações para resolução nas reuniões de equipe e acompanhamento das demandas criadas para dar continuidade ao discutido. Quem tiver `capability` de `can_mark_issue_as_read` pode marcar um caso como concluído.
+- [ ] Canal de informativos da Unidade (Quando será o próximo grupo, mutirão, agendamento...)
 
-## Ambiente de desenvolvimento
+## Testes
 
-Para desenvolvimento foi criado um ambiente docker que supre as necessidades da construção, entretando para produção será instalado em um computador Windows de baixo custo da unidade que funcionará como servidor.
-
-### Gerando secret key
+Utilizar o ambiente de desenvolvimento devcontainer no VSCode.
 
 ```sh
-python -c 'import secrets; print(secrets.token_hex())'
+pytest -s -k Flow
 ```
-
-```
-docker-compose up
-```
-
-## Reset app
-
-```sh
-make run
-make migrate
-```
-
-## Comandos de migrations
-
-```sh
-make migrate
-make m="update some table" makemigrations
-```
-
-## Utilizando o alembic no ambiente de desenvolvimento
-
-```sh
-# Abrindo terminal no container flask
-make terminal
-flask db init
-flask db migrate -m "Initial migration"
-flask db upgrade
-```
-
-## Ambiente de produção
-
-Orientações para instalação de todo o sistema em Windows
-
-### instalando dependências
-
-Instalamos o [python](https://www.python.org/downloads/) e o [node](https://nodejs.org/en/download/). Após isso ié necessário [criar um ambiente virtual](https://docs.python.org/pt-br/3/library/venv.html#creating-virtual-environments) e o [yarn] que será necessário para criar a build React:
-
-```sh
-npm install --global yarn
-```
-
-### Realizando a build React
-
-```sh
-cd reactapp
-yarn
-yarn build
-```
-
-### Rodando aplicação completa
-
-```sh
-cd flaskapp
-# criando ambiente virtual
-python -m venv path/to/myenv
-# ativando o ambiente virtual
-myenv/Scripts/activate
-FLASK_APP=app/__init__.py
-FLASK_DEBUG=false
-pip install -r requirements.txt
-gunicorn --bind 0.0.0.0:5000 wsgi:app --daemon
-```
-
-### Rodando ao inicializar Windows 7
-
-Salvar arquivo `C:\Users\(username)\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Startup\run_internment.bat`:
-
-```bat
-@echo off
-cd C:\path\to\project
-myenv/Scripts/activate
-FLASK_APP=app/__init__.py
-FLASK_DEBUG=false
-gunicorn --bind 0.0.0.0:5000 wsgi:app --daemon
-```
-
-### Testes
-
-Para facilitar o teste estou mantendo no README algumas requisições para preencher o banco de dados com informações iniciais e úteis para o teste estão disponíveis na lista de comando do `Makefile`

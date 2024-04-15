@@ -1,0 +1,29 @@
+mutation CreatePrescriptionListItem {
+  createPrescriptionListItem(
+    item: {
+      origin: capes, 
+      dosage: "prometazina 25mg 001", 
+      reason: "CID 10 X", 
+      observations: "Algumas observações", 
+      withdrawalAttempt: "Sim, foi tentado no CAPES, sem sucesso",
+      
+    	patient: {
+        name: "Filipe Lopes"
+        motherName: "Adriana Lopes"
+        sex: male
+        birthdate: "1995-12-01"
+        cns: "101398019700007"
+        cpf: "38893490641"
+        weightKg: 68.5
+        phone: "71992540736"
+      }
+    }
+  ) {
+    id
+    patient{
+      name
+      cpf
+      id
+    }
+  }
+}

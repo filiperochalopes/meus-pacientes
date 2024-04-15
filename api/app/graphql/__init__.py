@@ -35,6 +35,19 @@ type_defs = gql(
             "Chave mestra do usuário `root` para poder realizar cadastro de usuários"
             masterKey:String!,
             cns: String!): User
+        """
+        Cria um item na lista de prescricoes de repetição
+        """
+        createPrescriptionListItem(
+            item: PrescriptionListItemInput!
+        ): PrescriptionListItem
+        """
+        Edita um item na lista de prescrições de repetição
+        """
+        editPrescriptionListItem(
+            id: Int!,
+            item: PrescriptionListItemInput!
+        ): PrescriptionListItem
     }
 
     input UserInput{
@@ -58,6 +71,27 @@ type_defs = gql(
         professionalDocumentUf:String, 
         "Número do documento de conselho profissional"
         professionalDocumentNumber:String
+    }
+
+    input PrescriptionListItemInput{
+        "Origem da prescricao, pode ser vindo do CAPES, de uso prolongado de BENZO ou medicações que tem livre passagem por ser de uso controlado e prolongado em doença crônica"
+        origin:OriginEnum,
+        "Dose da prescricao"
+        dosage:String,
+        "Motivo da prescricao"
+        reason:String,
+        "Observação da prescricao"
+        observations:String,
+        "Tentativa de retirada da prescricao"
+        withdrawalAttempt:String,
+        "Tempo de uso da prescricao"
+        usageTime:String,
+        "Data da ultima renovação da prescricao"
+        lastRenovation:String
+        "Paciente, ao colocar o ID, CPF ou CNS já vincula ao usuário existente, preencher dados diferentes dos já existente para poder criar novo paciente"
+        patient: PatientInput
+        "Id da insituição onde a lista pertence, geralmente é a mesma instituição em que está o paciente"
+        institutionId: Int
     }
 
     type AlembicVersion{
@@ -84,6 +118,60 @@ type_defs = gql(
         code: String!
         "Descrição da doença, max:44 min:5 caracteres"
         description: String!
+    }
+
+    type PrescriptionListItem {
+        id: ID!
+        origin: String
+        dosage: String
+        reason: String
+        observations: String
+        withdrawalAttempt: String
+        usageTime: String
+        lastRenovation: String
+        patient: Patient
+        istitution: Institution
+    }
+
+    enum OriginEnum {
+        capes
+        benzo
+        freepass   
+    }
+
+    enum SexEnum {
+        male
+        fema
+    }
+
+    type Patient {
+        id: ID!
+        name: String
+        motherName: String
+        sex: String
+        birthdate: String
+        cpf: String
+        cns: String
+        weightKg: Float
+        phone: String
+    }
+
+    type Institution {
+        id: ID!
+        name: String
+        cnes: String
+    }
+
+    input PatientInput {
+        id: ID
+        name: String
+        motherName: String
+        sex: SexEnum
+        birthdate: String
+        cpf: String
+        cns: String
+        weightKg: Float
+        phone: String
     }
 ''')
 
