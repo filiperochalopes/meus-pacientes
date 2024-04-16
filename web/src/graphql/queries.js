@@ -1,13 +1,18 @@
 import { gql } from "@apollo/client";
 
-export const GET_PRESCRIPTIONS = gql`
-  query getIntenments {
-    internments {
-      id
+export const GET_PRESCRIPTION_LIST = gql`
+  query GetPrescriptionList {
+    getPrescriptionList {
+      dosage
+      origin
+      reason
+      observations
+      lastRenovation
+      withdrawalAttempt
       patient {
-        id
         name
-        cns
+        birthdate
+        sex
         age
       }
     }

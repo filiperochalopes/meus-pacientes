@@ -22,14 +22,14 @@ class CamelCaseSchema(ma.SQLAlchemyAutoSchema):
         field_obj.data_key = camelcase(field_obj.data_key or field_name)
 
 
-class EnumToDictionaryField(fields.Field):
+class EnumToNameField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
         return value.name
 
 
-class ChildValueField(fields.Field):
+class EnumToValueField(fields.Field):
     def _serialize(self, value, attr, obj, **kwargs):
         if value is None:
             return None
@@ -53,9 +53,15 @@ class PatientSchema(CamelCaseSchema):
         model = Patient
         include_fk = True
 
-    sex = EnumToDictionaryField(attribute=('sex'))
+    sex = EnumToNameField(attribute=('sex'))
     age = fields.Str(dump_only=True)
 
-class PrescriptionListItemSchema(CamelCaseSchema):
+class PrescriptionListSchema(CamelCaseSchema):
     class Meta:
         model = PrescriptionList
+        include_relationships = True
+        include_fk =True
+        
+    origin = EnumToValueField(attribute=('origin'))
+    patient = sqa_fields.Nested(PatientSchema)
+

@@ -12,5 +12,6 @@ cd ..
 cp .devcontainer/nginx.conf /etc/nginx/sites-available/default
 service nginx start
 cd web
+export REACT_APP_API_URL=/api/v1
 yarn
 yarn start

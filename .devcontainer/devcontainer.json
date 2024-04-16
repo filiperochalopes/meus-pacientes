@@ -23,7 +23,8 @@
   
     "remoteEnv": {
       "FLASK_APP": "/workspaces/e-SUS-PEC-meus-pacientes/api/app/__init__.py",
-      "PYTHONUNBUFFERED":"TRUE"
+      "PYTHONUNBUFFERED":"TRUE",
+      "REACT_APP_API_URL": "/api/v1"
     },
   
     // Configure tool-specific properties.

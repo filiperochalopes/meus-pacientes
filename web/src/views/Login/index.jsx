@@ -80,7 +80,7 @@ function Login() {
           Entrar
         </Button>
       </Form>
-      </SidePageLayout>
+    </SidePageLayout>
   );
 }
 

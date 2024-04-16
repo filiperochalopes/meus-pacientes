@@ -8,6 +8,8 @@ import { ApolloProvider } from "@apollo/client";
 import apolloClient from "services/apiClient";
 import { SnackbarProvider } from "notistack";
 
+import "primereact/resources/themes/md-light-indigo/theme.css";
+
 function App() {
   return (
     <SnackbarProvider autoHideDuration={3000} maxSnack={3}>

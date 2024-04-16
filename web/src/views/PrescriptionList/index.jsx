@@ -1,43 +1,106 @@
-// a react component created with LYT_SimplePage wrap to display  a DataTable from primereact
-import LYT_SimplePage from "components/LYT_SimplePage";
+import LYTSimplePage from "components/LYT_SimplePage";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { useContextProvider } from "services/Context";
 import { useEffect, useState } from "react";
 import apiClient from "services/apiClient";
-import { GET_PRESCRIPTIONS } from "graphql/queries";
+import { GET_PRESCRIPTION_LIST } from "graphql/queries";
+import { FilterMatchMode } from "primereact/api";
 
 // the function component to display a DataTable from primereact
 const PrescriptionList = () => {
-
   const [prescriptionList, setPrescriptionList] = useState([]);
-  const { user } = useContextProvider();
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+    representative: { value: null, matchMode: FilterMatchMode.IN },
+    status: { value: null, matchMode: FilterMatchMode.EQUALS },
+    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
+  });
+  const [globalFilterValue, setGlobalFilterValue] = useState(""),
+    [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!user) {
-      return;
-    }
-    apiClient.query({
-      query: GET_PRESCRIPTIONS,
-    }).then(({ data }) => {
-      console.log(data)
-    })
-  }, [])
+    apiClient
+      .query({
+        query: GET_PRESCRIPTION_LIST,
+      })
+      .then(({ data }) => {
+        console.log(data);
+        setPrescriptionList(data.getPrescriptionList);
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const onGlobalFilterChange = (e) => {
+    const value = e.target.value;
+    let _filters = { ...filters };
+
+    _filters["global"].value = value;
+
+    setFilters(_filters);
+    setGlobalFilterValue(value);
+  };
+
+  const renderHeader = () => {
+    return (
+      <div className="flex justify-content-end">
+        <span className="p-input-icon-left">
+          <i className="pi pi-search" />
+          <input
+            type="text"
+            value={globalFilterValue}
+            onChange={onGlobalFilterChange}
+            placeholder="Keyword Search"
+          />
+        </span>
+      </div>
+    );
+  };
+  const header = renderHeader();
 
   return (
-    <LYT_SimplePage title="Lista de Prescrições" >
-      <DataTable value={prescriptionList} size="small" showGridlines stripedRows paginator rows={20} rowsPerPageOptions={[20, 40, 80, 160]} sortMode="multiple" globalFilterFields={['name']} editMode="row" scrollable>
-        <Column field="name" header="Nome do Paciente" frozen></Column>
-        <Column field="origin" header="Origem"></Column>
+    <LYTSimplePage title="Lista de Prescrições">
+      <DataTable
+        value={prescriptionList}
+        // size="small"
+        paginator
+        rows={20}
+        rowsPerPageOptions={[20, 40, 80, 160]}
+        sortMode="multiple"
+        removableSort
+        globalFilterFields={["patient.name"]}
+        editMode="row"
+        scrollable
+        header={header}
+        loading={loading}
+      >
+        <Column
+          field="patient.name"
+          header="Nome do Paciente"
+          sortable
+          filterField="patient.name"
+          frozen
+        ></Column>
+        <Column
+          field="origin"
+          header="Origem"
+          sortable
+          filterField="origin"
+          filterPlace
+        ></Column>
         <Column field="dosage" header="Dose"></Column>
         <Column field="reason" header="Motivo"></Column>
         <Column field="observations" header="Observações"></Column>
-        <Column field="withdrawal_attempt" header="Tentativa de Retirada/Desmame"></Column>
+        <Column
+          field="withdrawal_attempt"
+          header="Tentativa de Retirada/Desmame"
+        ></Column>
         <Column field="usage_time" header="Tempo de Uso"></Column>
         <Column field="last_renovation" header="Última Renovação"></Column>
       </DataTable>
-    </LYT_SimplePage>
-  )
-}
+    </LYTSimplePage>
+  );
+};
 
-export default PrescriptionList
+export default PrescriptionList;

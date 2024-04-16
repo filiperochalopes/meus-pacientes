@@ -5,6 +5,7 @@ from app.env import DatabaseSettings
 from app.graphql import query
 import app.graphql.queries.cid10
 import app.graphql.queries.me
+import app.graphql.queries.get_prescription_list
 
 
 @query.field("hello")

@@ -13,6 +13,7 @@ def create_prescription_list_item(_, info, item: dict):
     patient = db.session.query(Patient).filter(or_(
         Patient.cns == patient_dict.get('cns'), Patient.cpf == patient_dict.get('cpf'), Patient.id == patient_dict.get('id'))).first()
     if not patient:
+        patient_dict['institution_id'] = 1
         patient = Patient(**patient_dict)
         db.session.add(patient)
         db.session.commit()

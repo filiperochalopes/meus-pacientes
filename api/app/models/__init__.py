@@ -175,6 +175,7 @@ class PrescriptionList(BaseModel):
     usage_time = db.Column(db.String)
     last_renovation = db.Column(db.Date)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    patient = relationship('Patient')
 
 class HomeCareList(BaseModel):
     __tablename__ = 'home_care_list'

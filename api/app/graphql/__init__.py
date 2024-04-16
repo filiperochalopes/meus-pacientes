@@ -12,6 +12,8 @@ type_defs = gql(
        alembicVersion: AlembicVersion
        "Retorna dados do usuário logado"
        me: User
+       "Retorna lista de prescricoes de repetição"
+       getPrescriptionList: [PrescriptionListItem]
     }
 
     type Mutation {
@@ -150,6 +152,7 @@ type_defs = gql(
         motherName: String
         sex: String
         birthdate: String
+        age: String
         cpf: String
         cns: String
         weightKg: Float
