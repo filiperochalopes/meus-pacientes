@@ -14,6 +14,8 @@ type_defs = gql(
        me: User
        "Retorna lista de prescricoes de repetição"
        getPrescriptionList: [PrescriptionListItem]
+       "Retorna lista de chegada de exames"
+       getLabTestArrival(cpf: String): [LabTestArrival]
     }
 
     type Mutation {

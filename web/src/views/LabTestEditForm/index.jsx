@@ -5,12 +5,14 @@ import Button from "components/Button";
 import { useFormik } from "formik";
 
 const LabTestForm = () => {
-  const formik = useFormik({
-    initialvalues: {
+  const [id, setId] = React.useState(null),
+  formik = useFormik({
+    initialValues: {
       id: 1,
       pickDate: new Date().toISOString().slice(0, 10),
     },
   });
+
   return (
     <LYTSimplePage title="Cadastro de Exames">
       <p>

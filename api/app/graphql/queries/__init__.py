@@ -6,6 +6,7 @@ from app.graphql import query
 import app.graphql.queries.cid10
 import app.graphql.queries.me
 import app.graphql.queries.get_prescription_list
+import app.graphql.queries.get_lab_test_arrival
 
 
 @query.field("hello")
