@@ -13,7 +13,9 @@ function App() {
       <ApolloProvider client={apolloClient}>
         <ThemeProvider theme={theme}>
           <GlobalStyles />
-          <SnackbarProvider anchorOrigin={{ vertical: "top", horizontal: "center" }} />
+          <SnackbarProvider
+            anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          />
           <Routes />
         </ThemeProvider>
       </ApolloProvider>

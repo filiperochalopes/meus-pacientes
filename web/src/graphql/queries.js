@@ -75,3 +75,19 @@ export const GET_PATIENTS = gql`
     }
   }
 `;
+
+export const GET_LAB_TEST_ARRIVAL = gql`
+  query GetLabTestArrival($cpf: String) {
+    getLabTestArrival(cpf: $cpf) {
+      id
+      patient {
+        id
+        name
+        dob
+        cpf
+      }
+      labTestDate
+      arrivalDate
+    }
+  }
+`;

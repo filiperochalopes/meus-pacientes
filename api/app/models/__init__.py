@@ -196,4 +196,6 @@ class LabTestArrival(BaseModel):
     arrival_date = db.Column(db.Date, nullable=False)
     lab_test_date = db.Column(db.Date, nullable=False)
     pick_date = db.Column(db.Date, nullable=True)
-    created_at = db.Column(db.DateTime(timezone=True))
+    created_at = db.Column(db.DateTime(timezone=True),
+                           server_default=func.now())
+    updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())

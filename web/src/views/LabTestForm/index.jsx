@@ -10,8 +10,8 @@ import validationSchema from "./validationSchema";
 
 const LabTestForm = () => {
   const [createLabTestArrival, { data, loading }] = useMutation(
-    CREATE_OR_UPDATE_LAB_TEST_ARRIVAL
-  ),
+      CREATE_OR_UPDATE_LAB_TEST_ARRIVAL
+    ),
     initialValues = {
       arrivalDate: new Date().toISOString().slice(0, 10),
       labTestDate: "",
@@ -24,9 +24,17 @@ const LabTestForm = () => {
       initialTouched: {},
       validationSchema,
       onSubmit: async (values, { resetForm }) => {
-        await createLabTestArrival({ variables: { item: { arrivalDate: values.arrivalDate, labTestDate: values.labTestDate, patient: { cpf: values.patientCpf } } } });
+        await createLabTestArrival({
+          variables: {
+            item: {
+              arrivalDate: values.arrivalDate,
+              labTestDate: values.labTestDate,
+              patient: { cpf: values.patientCpf },
+            },
+          },
+        });
         resetForm({ values: initialValues });
-        enqueueSnackbar("Cadastrado com sucesso!", { variant: "success" })
+        enqueueSnackbar("Cadastrado com sucesso!", { variant: "success" });
       },
     });
 
@@ -84,8 +92,15 @@ const LabTestForm = () => {
           required
         />
         {/* <pre>{JSON.stringify(formik, null, 2)}</pre> */}
-        <Button type="submit" disabled={loading || Object.keys(formik.errors).length !== 0}>
-          {loading ? "Carregando..." : Object.keys(formik.errors).length === 0 ? "Enviar" : "Verifique o Erro"}
+        <Button
+          type="submit"
+          disabled={loading || Object.keys(formik.errors).length !== 0}
+        >
+          {loading
+            ? "Carregando..."
+            : Object.keys(formik.errors).length === 0
+            ? "Enviar"
+            : "Verifique o Erro"}
         </Button>
       </form>
     </LYTSimplePage>
