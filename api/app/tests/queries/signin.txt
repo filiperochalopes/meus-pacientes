@@ -3,7 +3,7 @@ mutation{
     user{
       id
       name
-      birthdate
+      dob
     }
     token
   }

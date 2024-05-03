@@ -1,12 +1,32 @@
 import styled from "styled-components";
 
 export default styled.div`
-  .flex {
-    display: flex;
+  main {
+    max-width: 1200px;
+    padding: 1rem 16px;
+    margin: 0 auto;
+    box-sizing: border-box;
   }
 
-  .sideComponent {
-    background: grey;
+  aside {
+    position: absolute;
+    top: 40px;
+    z-index: 99;
+    background: blue;
     color: white;
+
+    a {
+      color: white;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+
+    ul {
+      li {
+        padding: 8px;
+      }
+    }
   }
 `;

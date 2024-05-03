@@ -61,10 +61,10 @@ class User(BaseModel):
     name = db.Column(db.String, nullable=False)
     cpf = db.Column(db.String, unique=True, nullable=True)
     cns = db.Column(db.String, unique=True, nullable=True)
-    birthdate = db.Column(db.Date, nullable=False)
+    dob = db.Column(db.Date, nullable=False)
     phone = db.Column(db.String, nullable=True)
 
-    institution_roles = relationship('UserInstitutionRole')
+    institution_roles = relationship('UserInstitutionRole', back_populates='user')
     patients = relationship('Patient', secondary=patient_user, backref
     ='professionals')
     
@@ -107,6 +107,7 @@ class UserInstitutionRole(BaseModel):
 
     institution = relationship('Institution')
     role = relationship('Role')
+    user = relationship('User', back_populates='institution_roles')
 
 class Cid10(BaseModel):
     __tablename__ = 'cid10'
@@ -126,7 +127,7 @@ class Patient(BaseModel):
     name = db.Column(db.String, nullable=False)
     mother_name = db.Column(db.String, nullable=True)
     sex = db.Column(db.Enum(SexEnum), nullable=True)
-    birthdate = db.Column(db.Date, nullable=True)
+    dob = db.Column(db.Date, nullable=True)
     cpf = db.Column(db.String, unique=True, nullable=True)
     cns = db.Column(db.String, unique=True, nullable=True)
     rg = db.Column(db.String, unique=True, nullable=True)
@@ -144,7 +145,8 @@ class Patient(BaseModel):
 
     @hybrid_property
     def age(self):
-        return calculate_age(self.birthdate)
+        return calculate_age(self.dob)
+
 
 class Comorbidity(BaseModel):
     __tablename__ = 'comorbidities'
@@ -174,6 +176,7 @@ class PrescriptionList(BaseModel):
     withdrawal_attempt = db.Column(db.String)
     usage_time = db.Column(db.String)
     last_renovation = db.Column(db.Date)
+    last_prescription_date = db.Column(db.Date)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
     patient = relationship('Patient')
 
@@ -184,3 +187,13 @@ class HomeCareList(BaseModel):
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
     last_visit = db.Column(db.Date, nullable=True)
 
+class LabTestArrival(BaseModel):
+    __tablename__ = 'lab_test_arrivals'
+
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    patient = relationship('Patient')
+    arrival_date = db.Column(db.Date, nullable=False)
+    lab_test_date = db.Column(db.Date, nullable=False)
+    pick_date = db.Column(db.Date, nullable=True)
+    created_at = db.Column(db.DateTime(timezone=True))

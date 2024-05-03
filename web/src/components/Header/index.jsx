@@ -1,12 +1,22 @@
 import React from "react";
 import Header from "./styles";
+import PropTypes from "prop-types";
 
-const MainHeader = ({ hideControls }) => {
+const MainHeader = ({ showMenu, onMenuClick }) => {
   return (
     <Header>
-      {!hideControls && <div id="menu">Menu</div>} Nome da Aplicação
+      {showMenu && <button onClick={onMenuClick}>Menu</button>} PSF SEDE 2 •
+      Meus Pacientes
     </Header>
   );
+};
+
+MainHeader.propTypes = {
+  showMenu: PropTypes.bool,
+};
+
+MainHeader.defaultProps = {
+  showMenu: true,
 };
 
 export default MainHeader;

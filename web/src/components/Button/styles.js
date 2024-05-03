@@ -39,6 +39,12 @@ export default styled.button`
   color: ${({ theme }) => theme.colors.white};
   border: none;
 
+  :disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+    background: ${({ theme }) => theme.colors.grayMedium};
+  }
+
   ${({ customType }) => {
     switch (customType) {
       case "gray":

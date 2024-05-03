@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const GET_PRESCRIPTION_LIST = gql`
   query GetPrescriptionList {
     getPrescriptionList {
+      id
       dosage
       origin
       reason
@@ -11,9 +12,21 @@ export const GET_PRESCRIPTION_LIST = gql`
       withdrawalAttempt
       patient {
         name
-        birthdate
+        dob
         sex
         age
+        professionals {
+          name
+          institutionRoles {
+            id
+            institution {
+              name
+            }
+            role {
+              name
+            }
+          }
+        }
       }
     }
   }
@@ -33,7 +46,7 @@ export const GET_PATIENTS = gql`
     patients(queryNameCnsCpf: $queryNameCnsCpf) {
       id
       name
-      birthdate
+      dob
       sex
       age
       cns

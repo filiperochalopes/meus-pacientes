@@ -1,5 +1,5 @@
 import LYTSimplePage from "components/LYT_SimplePage";
-import { DataTable } from "primereact/datatable";
+import { StyledDataTable } from "./styles";
 import { Column } from "primereact/column";
 import { useEffect, useState } from "react";
 import apiClient from "services/apiClient";
@@ -11,11 +11,6 @@ const PrescriptionList = () => {
   const [prescriptionList, setPrescriptionList] = useState([]);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-    name: { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    "country.name": { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-    representative: { value: null, matchMode: FilterMatchMode.IN },
-    status: { value: null, matchMode: FilterMatchMode.EQUALS },
-    verified: { value: null, matchMode: FilterMatchMode.EQUALS },
   });
   const [globalFilterValue, setGlobalFilterValue] = useState(""),
     [loading, setLoading] = useState(true);
@@ -32,6 +27,7 @@ const PrescriptionList = () => {
       .finally(() => setLoading(false));
   }, []);
 
+  // Updates the global filter value and triggers a filter update.
   const onGlobalFilterChange = (e) => {
     const value = e.target.value;
     let _filters = { ...filters };
@@ -48,10 +44,10 @@ const PrescriptionList = () => {
         <span className="p-input-icon-left">
           <i className="pi pi-search" />
           <input
-            type="text"
+            type="search"
             value={globalFilterValue}
             onChange={onGlobalFilterChange}
-            placeholder="Keyword Search"
+            placeholder="Buscar por nome ou medicação"
           />
         </span>
       </div>
@@ -59,21 +55,41 @@ const PrescriptionList = () => {
   };
   const header = renderHeader();
 
+  const textEditor = (options) => {
+    return (
+      <input
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+        onKeyDown={(e) => e.stopPropagation()}
+      />
+    );
+  };
+
+  const onCellEditComplete = (e) => {
+    console.log(e);
+    const { rowData, newValue, field } = e;
+    console.log(`Editando ${rowData.id} - ${field} para ${newValue}`);
+  };
+
   return (
     <LYTSimplePage title="Lista de Prescrições">
-      <DataTable
+      <StyledDataTable
         value={prescriptionList}
-        // size="small"
+        size="small"
         paginator
         rows={20}
         rowsPerPageOptions={[20, 40, 80, 160]}
         sortMode="multiple"
         removableSort
-        globalFilterFields={["patient.name"]}
-        editMode="row"
+        globalFilterFields={["patient.name", "dosage", "origin"]}
+        editMode="cell"
         scrollable
         header={header}
         loading={loading}
+        filters={filters}
+        onFilter={onGlobalFilterChange}
+        emptyMessage="Não foram encontrados pacientes."
       >
         <Column
           field="patient.name"
@@ -95,10 +111,28 @@ const PrescriptionList = () => {
         <Column
           field="withdrawal_attempt"
           header="Tentativa de Retirada/Desmame"
+          editor={(options) => textEditor(options)}
+          onCellEditComplete={onCellEditComplete}
         ></Column>
-        <Column field="usage_time" header="Tempo de Uso"></Column>
-        <Column field="last_renovation" header="Última Renovação"></Column>
-      </DataTable>
+        <Column
+          field="last_prescription_date"
+          header="Data da Ultima Prescrição"
+          editor={(options) => textEditor(options)}
+          onCellEditComplete={onCellEditComplete}
+        ></Column>
+        <Column
+          field="usage_time"
+          header="Tempo de Uso"
+          editor={(options) => textEditor(options)}
+          onCellEditComplete={onCellEditComplete}
+        ></Column>
+        <Column
+          field="last_renovation"
+          header="Última Renovação"
+          editor={(options) => textEditor(options)}
+          onCellEditComplete={onCellEditComplete}
+        ></Column>
+      </StyledDataTable>
     </LYTSimplePage>
   );
 };

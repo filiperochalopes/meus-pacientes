@@ -8,6 +8,7 @@ export default styled.input`
   font-size: 0.8125rem;
   line-height: 1rem;
   margin: 0px;
+  margin-top: 0.25rem;
   padding: calc(-1px + 0.5rem) 0.5rem;
   width: 100%;
   transition-property: box-shadow;
@@ -42,12 +43,18 @@ export default styled.input`
 export const ContainerInput = styled.div`
   flex: 1;
   position: relative;
+  margin-bottom: 1rem;
+
+  small {
+    line-height: 11px;
+    font-size: 12px;
+    color: #767676;
+  }
 `;
 
 export const Label = styled.label`
   font-weight: bold;
   display: block;
-  margin-bottom: 0.25rem;
   line-height: 20px;
 `;
 

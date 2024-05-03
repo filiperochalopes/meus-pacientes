@@ -3,7 +3,7 @@ __pycache__
 data
 .idea
 *.db
-flaskapp/app/tests/files/tmp/*.pdf
+api/app/tests/files/tmp/*.pdf
 data
 .DS_Store
 .pytest_cache

@@ -7,7 +7,7 @@ mutation{
       password: "passw@rd"
       cpf: "67705766434"
       cns: "843199791240004"
-      birthdate: "1995-12-01"
+      dob: "1995-12-01"
       professionalCategory: "doc"
       professionalDocumentUf: "BA"
       professionalDocumentNumber: "37825"

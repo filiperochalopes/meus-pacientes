@@ -50,6 +50,13 @@ type_defs = gql(
             id: Int!,
             item: PrescriptionListItemInput!
         ): PrescriptionListItem
+        """
+        Cria ou atualiza uma chegada de exame
+        """
+        createOrUpdateLabTestArrival(
+            id: Int,
+            item: LabTestArrivalInput
+        ): LabTestArrival
     }
 
     input UserInput{
@@ -66,13 +73,7 @@ type_defs = gql(
         "Apenas dígitos, para fins de testes, pode gerar [nesse link](https://geradornv.com.br/gerador-cns/)"
         cns:String, 
         "Data de aniversário no formato `yyyy-mm-dd`"
-        birthdate: String, 
-        "Categoria de profissional, um dedstes: `doc` para médicos, `nur` para enfermeira e `tec` para técnico de enfermagem"
-        professionalCategory:String, 
-        "UF do documento de conselho profissional"
-        professionalDocumentUf:String, 
-        "Número do documento de conselho profissional"
-        professionalDocumentNumber:String
+        dob: String, 
     }
 
     input PrescriptionListItemInput{
@@ -96,6 +97,17 @@ type_defs = gql(
         institutionId: Int
     }
 
+    input LabTestArrivalInput{
+        "Data da chegada do exame no formato `yyyy-mm-dd`"
+        arrivalDate: String
+        "Paciente, ao colocar o ID, CPF ou CNS será vinculado ao usuário existente, preencher dados diferentes dos já existente para poder criar novo paciente"
+        patient: PatientInput
+        "Data da realização do exame no formato `yyyy-mm-dd`"
+        labTestDate: String
+        "Data da retirada do exame pelo paciente no formato `yyyy-mm-dd`"
+        pickDate: String
+    }
+
     type AlembicVersion{
         version: String
     }
@@ -104,10 +116,9 @@ type_defs = gql(
         id: ID!
         email: String
         name: String
-        birthdate: String
-        professionalCategory: String
-        professionalDocumentUf: String
-        professionalDocumentNumber: String
+        dob: String
+        "Função exercida pelo usuário/profissional"
+        institutionRoles: [UserInstitutionRole]
     }
 
     type UserToken {
@@ -135,6 +146,14 @@ type_defs = gql(
         istitution: Institution
     }
 
+    type LabTestArrival{
+        id: ID!
+        arrivalDate: String
+        patient: Patient
+        labTestDate: String
+        pickDate: String
+    }
+
     enum OriginEnum {
         capes
         benzo
@@ -151,12 +170,13 @@ type_defs = gql(
         name: String
         motherName: String
         sex: String
-        birthdate: String
+        dob: String
         age: String
         cpf: String
         cns: String
         weightKg: Float
         phone: String
+        professionals: [User]
     }
 
     type Institution {
@@ -170,11 +190,22 @@ type_defs = gql(
         name: String
         motherName: String
         sex: SexEnum
-        birthdate: String
+        dob: String
         cpf: String
         cns: String
         weightKg: Float
         phone: String
+    }
+
+    type UserInstitutionRole{
+        id: ID!
+        institution: Institution
+        role: Role
+    }
+
+    type Role {
+        id: ID!
+        name: String
     }
 ''')
 

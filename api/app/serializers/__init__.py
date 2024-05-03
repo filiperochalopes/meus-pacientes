@@ -1,6 +1,6 @@
 import sys
 from flask_marshmallow import Marshmallow
-from app.models import Patient, User, Cid10, PrescriptionList
+from app.models import Patient, User, Cid10, PrescriptionList, UserInstitutionRole, Institution, Role, LabTestArrival
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
 
@@ -40,28 +40,53 @@ class Cid10Schema(CamelCaseSchema):
     class Meta:
         model = Cid10
 
+class InstitutionSchema(CamelCaseSchema):
+    class Meta:
+        model = Institution
+
+class RoleSchema(CamelCaseSchema):
+    class Meta:
+        model = Role
+
+class UserInstitutionRoleSchema(CamelCaseSchema):
+    class Meta:
+        model = UserInstitutionRole
+
+    institution = sqa_fields.Nested(InstitutionSchema)
+    role = sqa_fields.Nested(RoleSchema)
+
 
 class UserSchema(CamelCaseSchema):
-    birthdate = fields.Date(format='%Y-%m-%d')
-
     class Meta:
         model = User
 
+    dob = fields.Date(format='%d-%m-%Y')
+    institution_roles = fields.List(sqa_fields.Nested(UserInstitutionRoleSchema))
 
 class PatientSchema(CamelCaseSchema):
     class Meta:
         model = Patient
+        include_relationships = True
         include_fk = True
 
     sex = EnumToNameField(attribute=('sex'))
     age = fields.Str(dump_only=True)
+    professionals = fields.List(sqa_fields.Nested(UserSchema))
+
 
 class PrescriptionListSchema(CamelCaseSchema):
     class Meta:
         model = PrescriptionList
         include_relationships = True
-        include_fk =True
-        
+        include_fk = True
+
     origin = EnumToValueField(attribute=('origin'))
     patient = sqa_fields.Nested(PatientSchema)
 
+class LabTestArrivalSchema(CamelCaseSchema):
+    class Meta:
+        model = LabTestArrival
+        include_relationships = True
+        include_fk = True
+    
+    patient = sqa_fields.Nested(PatientSchema)

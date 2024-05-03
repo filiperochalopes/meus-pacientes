@@ -23,3 +23,18 @@ export const UPDATE_PATIENT = gql`
     }
   }
 `;
+
+export const CREATE_OR_UPDATE_LAB_TEST_ARRIVAL = gql`
+  mutation CreateOrUpdateLabTestArrival($id: Int, $item: LabTestArrivalInput!) {
+    createOrUpdateLabTestArrival(id: $id, item: $item) {
+      id
+      patient {
+        name
+        cpf
+      }
+      arrivalDate
+      labTestDate
+      pickDate
+    }
+  }
+`;

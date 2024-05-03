@@ -11,7 +11,7 @@ mutation CreatePrescriptionListItem {
         name: "Filipe Lopes"
         motherName: "Adriana Lopes"
         sex: male
-        birthdate: "1995-12-01"
+        dob: "1995-12-01"
         cns: "101398019700007"
         cpf: "38893490641"
         weightKg: 68.5
