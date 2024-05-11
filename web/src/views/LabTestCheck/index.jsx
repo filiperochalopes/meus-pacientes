@@ -55,13 +55,23 @@ const LabTestForm = () => {
                 Carregando...
               </p>
             )}
-            {!data?.getLabTestArrival?.length && <p>Não temos exames seu no momento</p>}
-            {data?.getLabTestArrival?.length && <p>
-              <span role="img" aria-label="emoji check">
-                ✅
-              </span>{" "}
-              Seu exame chegou no dia! Temos ({data.getLabTestArrival.length}) exame(s)! Pode vir buscar!
-            </p>}
+
+            {!data?.getLabTestArrival?.length && data && (
+              <p>Não temos exames seu no momento</p>
+            )}
+            {data?.getLabTestArrival?.length && (
+              <p>
+                <span role="img" aria-label="emoji check">
+                  ✅
+                </span>{" "}
+                Seu exame chegou no dia{" "}
+                {new Date(
+                  data.getLabTestArrival[0].arrivalDate
+                ).toLocaleDateString("pt-BR")}
+                ! Temos ({data.getLabTestArrival.length}) exame(s)! Pode vir
+                buscar!
+              </p>
+            )}
           </strong>
         </big>
       </center>

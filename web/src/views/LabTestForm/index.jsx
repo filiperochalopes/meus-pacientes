@@ -18,6 +18,7 @@ const LabTestForm = () => {
       patientName: "",
       patientDob: "",
       patientCpf: "",
+      patientPhone: "",
     },
     formik = useFormik({
       initialValues,
@@ -29,7 +30,12 @@ const LabTestForm = () => {
             item: {
               arrivalDate: values.arrivalDate,
               labTestDate: values.labTestDate,
-              patient: { cpf: values.patientCpf },
+              patient: {
+                name: values.patientName,
+                cpf: values.patientCpf,
+                dob: values.patientDob,
+                phone: values.patientPhone,
+              },
             },
           },
         });
@@ -71,8 +77,8 @@ const LabTestForm = () => {
         />
         <Input
           formik={formik}
-          type="number"
-          name="phone"
+          type="text"
+          name="patientPhone"
           placeholder="Telefone do paciente"
         />
         <Input

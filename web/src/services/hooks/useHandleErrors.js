@@ -1,4 +1,4 @@
-const { useSnackbar } = require("notistack");
+import { useSnackbar } from "notistack";
 
 const useHandleErrors = () => {
   const { enqueueSnackbar } = useSnackbar();

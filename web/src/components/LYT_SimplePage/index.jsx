@@ -29,6 +29,9 @@ const SimplePageLayout = ({ children, showMenu }) => {
               <li>
                 <Link to="/passelivre">Lista de Passe Livre</Link>
               </li>
+              <li>
+                <Link to="/gestantes">Gestantes</Link>
+              </li>
             </ul>
           </aside>
         )}
