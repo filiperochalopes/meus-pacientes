@@ -14,7 +14,9 @@ const useDataTableHeader = ({
           placeholder="Buscar por nome ou medicação"
         />
         {handleInsertModelBtn && (
-          <button onClick={handleInsertModelBtn}>Adicionar novo registro</button>
+          <button onClick={handleInsertModelBtn}>
+            Adicionar novo registro
+          </button>
         )}
       </span>
     </div>

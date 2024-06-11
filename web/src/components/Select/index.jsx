@@ -3,8 +3,8 @@ import ReactSelect from "react-select";
 import Creatable from "react-select/creatable";
 import Container, { IconContainer } from "./styles";
 import { MdArrowDropDown } from "react-icons/md";
-import TextError from "components/TextError";
 import AsyncSelect from "react-select/async";
+
 const selectStyles = {
   container: (props) => ({
     ...props,
@@ -29,9 +29,12 @@ const selectStyles = {
 const Select = ({
   error,
   className,
+  name, 
+  formik,
   created = false,
   components = {},
   async = false,
+  options,
   ...rest
 }) => {
   const SelectType =
@@ -50,9 +53,18 @@ const Select = ({
           ...components,
         }}
         styles={selectStyles}
+        name={name}
+        options={options}
+        value={formik?.values[name]}
+        onChange={(e) => {
+          formik?.setFieldValue(name, e);
+          formik?.setFieldTouched(name, true);
+        }}
         {...rest}
       />
-      {error && <TextError>{error}</TextError>}
+      {formik?.errors[name] && formik.touched[name] && (
+        <ErrorText>{formik.errors[name]}</ErrorText>
+      )}
     </Container>
   );
 };

@@ -1,6 +1,6 @@
-import StyledInput, { ContainerInput, Label, ErrorText } from "./styles";
+import InputContainer, {ErrorText} from "./styles";
 
-import React, { useRef, useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 function Input({
   type,
@@ -10,49 +10,65 @@ function Input({
   description,
   formik,
   required,
-  multiline,
   onBlur,
   onChange,
   onFocus,
   disabled,
 }) {
-  const [select, setSelect] = useState(false);
-  const ref = useRef(null);
+
   return (
-    <ContainerInput disabled={disabled}>
+    <InputContainer disabled={disabled}>
       {placeholder && (
-        <Label
-          width={ref?.current?.clientWidth}
+        <label
           disabled={disabled}
-          select={select}
           to={name}
         >
           {label || placeholder} {required && <span>*</span>}
-        </Label>
+        </label>
       )}
       {description && <small>{description}</small>}
-      <StyledInput
-        type={type}
-        name={name}
-        id={name}
-        placeholder={placeholder}
-        onChange={(e) => {
-          formik?.handleChange(e);
-          if (onChange) onChange(e);
-        }}
-        onBlur={(e) => {
-          formik?.handleBlur(e);
-          if (onBlur) onBlur(e);
-        }}
-        onFocus={onFocus}
-        required={required}
-        value={formik?.values[name]}
-        disabled={disabled}
-      />
+      {type === "textarea" ? (
+        <textarea
+          name={name}
+          id={name}
+          placeholder={placeholder}
+          onChange={(e) => {
+            formik?.handleChange(e);
+            if (onChange) onChange(e);
+          }}
+          onBlur={(e) => {
+            formik?.handleBlur(e);
+            if (onBlur) onBlur(e);
+          }}
+          onFocus={onFocus}
+          required={required}
+          value={formik?.values[name]}
+          disabled={disabled}
+        />
+      ) : (
+        <input
+          type={type}
+          name={name}
+          id={name}
+          placeholder={placeholder}
+          onChange={(e) => {
+            formik?.handleChange(e);
+            if (onChange) onChange(e);
+          }}
+          onBlur={(e) => {
+            formik?.handleBlur(e);
+            if (onBlur) onBlur(e);
+          }}
+          onFocus={onFocus}
+          required={required}
+          value={formik?.values[name]}
+          disabled={disabled}
+        />
+      )}
       {formik?.errors[name] && formik.touched[name] && (
         <ErrorText>{formik.errors[name]}</ErrorText>
       )}
-    </ContainerInput>
+    </InputContainer>
   );
 }
 

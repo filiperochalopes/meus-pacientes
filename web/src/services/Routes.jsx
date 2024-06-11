@@ -11,6 +11,7 @@ import PrescrictionList from "views/PrescriptionList";
 import LabTestForm from "views/LabTestForm";
 import LabTestEditForm from "views/LabTestEditForm";
 import LabTestCheck from "views/LabTestCheck";
+import PregnantList from "views/PregnantList";
 
 const RouteList = () => {
   return (
@@ -21,10 +22,10 @@ const RouteList = () => {
         <Route exact path="/home" element={<Home />} />
         <Route exact path="/cadastro/exames" element={<LabTestForm />} />
         <Route exact path="/editar/exames" element={<LabTestEditForm />} />
-        {/* <Route exact path="/cadastro/gestantes" element={<PregnantForm />} /> */}
         <Route exact path="/meu-exame-chegou" element={<LabTestCheck />} />
-        <Route exact path="/passelivre" element={<PrescrictionList />} />
-        {/* <Route exact path="/gestantes" element={<PregnantList />} /> */}
+        <Route exact path="/passe-livre" element={<PrescrictionList />} />
+        <Route exact path="/gestantes" element={<PregnantList />} />
+        {/* <Route exact path="/busca-ativa" element={<PregnantList />} /> */}
       </Routes>
     </Router>
   );
