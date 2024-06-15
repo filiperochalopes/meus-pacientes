@@ -6,7 +6,7 @@ import DataTable from "components/DataTable";
 import Input from "components/Input";
 import Button from "components/Button";
 import { useFormik } from "formik";
-// import Select from "components/Select";
+import Select from "components/Select";
 
 // the function component to display a DataTable from primereact
 const PrescriptionList = () => {
@@ -54,7 +54,7 @@ const PrescriptionList = () => {
           {
             header: "Detalhes",
             body: ({ pregnancy }) =>
-              `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lmp}) e ${pregnancy?.gestationalAgeUs} pela USG de ${pregnancy?.us[0]?.date}`,
+              `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lmp}) e ${pregnancy?.gestacionalAgeFirstUs} pela USG de ${pregnancy?.us[0]?.age}`,
           },
           {
             header: "Observações",
@@ -70,7 +70,7 @@ const PrescriptionList = () => {
             name="patientDob"
             formik={formik}
           />
-          {/* <Select label="Agente de Saúde" name="patientTacs" formik={formik} options={[]} /> */}
+          <Select label="Agente de Saúde" name="patientTacs" formik={formik} options={[]} />
           <Input
             label="Paridade"
             description="Formato deve ser G9P9A0"
@@ -87,13 +87,13 @@ const PrescriptionList = () => {
           <Input
             type="number"
             label="Idade Gestacional na Primeira USG (Semana)"
-            name="pregnancyFirstUsWeek"
+            name="pregnancyFirstUsgWeek"
             formik={formik}
           />
           <Input
             type="number"
             label="Idade Gestacional na Primeira USG (Dia)"
-            name="pregnancyFirstUsDay"
+            name="pregnancyFirstUsgDay"
             formik={formik}
           />
           <Input

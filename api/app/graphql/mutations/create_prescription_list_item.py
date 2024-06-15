@@ -1,5 +1,5 @@
 from ariadne import convert_kwargs_to_snake_case
-from app.models import db, PrescriptionList, Patient
+from app.models import db, ContinuousPrescription, Patient
 from app.graphql import mutation
 from sqlalchemy import or_
 
@@ -18,7 +18,7 @@ def create_prescription_list_item(_, info, item: dict):
         db.session.add(patient)
         db.session.commit()
     item['patient_id'] = patient.id
-    prescription_item = PrescriptionList(**item)
+    prescription_item = ContinuousPrescription(**item)
     db.session.add(prescription_item)
     db.session.commit()
 

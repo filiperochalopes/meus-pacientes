@@ -1,5 +1,6 @@
 import enum
 import bcrypt
+import requests
 
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship
@@ -12,27 +13,18 @@ from app.services.utils import calculate_age
 
 metadata = MetaData()
 
+
 class SexEnum(enum.Enum):
     male = 'Masculino'
     fema = 'Feminino'
 
-class RiskEnum(enum.Enum):
-    active = 'Busca Ativa'
-    high = 'Alto Risco'
-    low = 'Baixo Risco'
-    vhigh = 'Muito Alto Risco'
-    vlow = 'Muito Baixo Risco'
-    no = 'Sem Risco'
-
-class OriginEnum(enum.Enum):
-    capes = 'Prescrições do CAPES'
-    benzo = 'Benzodiazepínicos'
-    freepass = 'Renovação Livre'
 
 db = SQLAlchemy()
 
+
 class BaseModel(db.Model):
     __abstract__ = True
+
 
 class Role(BaseModel):
     __tablename__ = 'roles'
@@ -40,17 +32,22 @@ class Role(BaseModel):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
 
+
+class RiskLevel(BaseModel):
+    __tablename__ = 'risk_levels'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    description = db.Column(db.String)
+
+
 class Institution(BaseModel):
     __tablename__ = 'institutions'
-    
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String)
     cnes = db.Column(db.String)
 
-patient_user = Table('_patient_user', db.Model.metadata,
-    db.Column('patient_id', db.Integer, db.ForeignKey('patients.id')),
-    db.Column('user_id', db.Integer, db.ForeignKey('users.id'))
-)
 
 class User(BaseModel):
     __tablename__ = 'users'
@@ -59,15 +56,14 @@ class User(BaseModel):
     email = db.Column(db.String, unique=True, nullable=True)
     password_hash = db.Column(db.String(128), nullable=False)
     name = db.Column(db.String, nullable=False)
-    cpf = db.Column(db.String, unique=True, nullable=True)
+    cpf = db.Column(db.String, unique=True, nullable=False)
     cns = db.Column(db.String, unique=True, nullable=True)
     dob = db.Column(db.Date, nullable=False)
     phone = db.Column(db.String, nullable=True)
 
-    institution_roles = relationship('UserInstitutionRole', back_populates='user')
-    patients = relationship('Patient', secondary=patient_user, backref
-    ='professionals')
-    
+    institution_roles = relationship(
+        'UserInstitutionRole', back_populates='user', uselist=True)
+
     # timestamps
     created_at = db.Column(db.DateTime(timezone=True),
                            server_default=func.now())
@@ -80,9 +76,9 @@ class User(BaseModel):
     @password.setter
     def password(self, password):
         self.password_hash = bcrypt.hashpw(password, bcrypt.gensalt()).decode()
-    
+
     @staticmethod
-    def generate_password(password:str):
+    def generate_password(password: str):
         return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode()
 
     def verify_password(self, password):
@@ -92,10 +88,11 @@ class User(BaseModel):
         return self.id
 
     def is_authenticated(self):
-        return not(self.is_annonymous())
+        return not (self.is_annonymous())
 
     def is_annonymous(self):
-        return not(self.is_authenticated())
+        return not (self.is_authenticated())
+
 
 class UserInstitutionRole(BaseModel):
     __tablename__ = '_user_institution_roles'
@@ -109,16 +106,32 @@ class UserInstitutionRole(BaseModel):
     role = relationship('Role')
     user = relationship('User', back_populates='institution_roles')
 
+
 class Cid10(BaseModel):
     __tablename__ = 'cid10'
 
     code = db.Column(db.String, primary_key=True)
     description = db.Column(db.String)
 
+
 patient_comorbidity = Table('_patient_comorbidity', db.Model.metadata,
-    db.Column('patient_id', db.Integer, db.ForeignKey('patients.id')),
-    db.Column('comorbidity_id', db.Integer, db.ForeignKey('comorbidities.id'))
-)
+                            db.Column('patient_id', db.Integer,
+                                      db.ForeignKey('patients.id')),
+                            db.Column('comorbidity_id', db.Integer,
+                                      db.ForeignKey('comorbidities.id'))
+                            )
+
+
+class PregnancyLabTest(BaseModel):
+    __tablename__ = 'pregnancy_lab_tests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    pregnancy_id = db.Column(db.Integer, ForeignKey('pregnancies.id'))
+    lab_test_id = db.Column(db.Integer, ForeignKey('lab_tests.id'))
+    pregnancy = relationship('Pregnancy')
+    lab_test = relationship('LabTest')
+    value = db.Column(db.String)
+
 
 class Patient(BaseModel):
     __tablename__ = 'patients'
@@ -133,10 +146,15 @@ class Patient(BaseModel):
     rg = db.Column(db.String, unique=True, nullable=True)
     weight_kg = db.Column(db.Float, nullable=True)
     phone = db.Column(db.String, nullable=True)
+    lab_tests = relationship('PatientLabTest', back_populates='patient')
     comorbidities = relationship('Comorbidity', secondary=patient_comorbidity)
 
     # relationships
     institution_id = db.Column(db.Integer, ForeignKey('institutions.id'))
+
+    # agente comunitário de saúde
+    community_health_agent_id = db.Column(db.Integer, ForeignKey('users.id'))
+    community_health_agent = relationship('User')
 
     # timestamps
     created_at = db.Column(db.DateTime(timezone=True),
@@ -156,36 +174,106 @@ class Comorbidity(BaseModel):
     abbreviation = db.Column(db.String, nullable=True)
     description = db.Column(db.String)
 
-class ComorbiditiesList(BaseModel):
-    __tablename__ = 'comorbidities_list'
+
+class PatientComorbidity(BaseModel):
+    __tablename__ = 'patient_comorbidities'
 
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
-    risk = db.Column(db.Enum(RiskEnum), nullable=False)
+    risk_id = db.Column(db.Integer, ForeignKey('risk_levels.id'))
+    risk = relationship('RiskLevel')
     last_visit = db.Column(db.Date, nullable=True)
     observations = db.Column(db.String)
 
-class PrescriptionList(BaseModel):
-    __tablename__ = 'prescriptions_list'
+
+class ContinuousPrescription(BaseModel):
+    __tablename__ = 'continuous_prescriptions'
 
     id = db.Column(db.Integer, primary_key=True)
-    origin = db.Column(db.Enum(OriginEnum), nullable=False)
+
     dosage = db.Column(db.String)
     reason = db.Column(db.String)
-    observations = db.Column(db.String)
     withdrawal_attempt = db.Column(db.String)
     usage_time = db.Column(db.String)
     last_renovation = db.Column(db.Date)
     last_prescription_date = db.Column(db.Date)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
     patient = relationship('Patient')
+    observations = db.Column(db.String)
 
-class HomeCareList(BaseModel):
-    __tablename__ = 'home_care_list'
+
+class HomeCare(BaseModel):
+    __tablename__ = 'home_care'
 
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
     last_visit = db.Column(db.Date, nullable=True)
+
+
+class Ultrasonography(BaseModel):
+    __tablename__ = 'ultrasonographies'
+
+    id = db.Column(db.Integer, primary_key=True)
+    date = db.Column(db.Date)
+    gestational_age_weeks = db.Column(db.Integer)
+    gestational_age_days = db.Column(db.Integer)
+    pregnancy_id = db.Column(db.Integer, ForeignKey('pregnancies.id'))
+
+    @hybrid_property
+    def formated_gestational_age(self):
+        return f"{self.gestational_age_weeks}s{self.gestational_age_days}d"
+
+
+class Pregnancy(BaseModel):
+    __tablename__ = 'pregnancies'
+
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    parity = db.Column(db.String)
+    last_menstrual_period = db.Column(db.Date)
+    ultrasonographies = relationship('Ultrasonography', uselist=True)
+    lab_tests = relationship('PregnancyLabTest', back_populates='pregnancy')
+    observations = db.Column(db.String)
+    risk_id = db.Column(db.Integer, ForeignKey('risk_levels.id'))
+    risk = relationship('RiskLevel', uselist=False)
+    day_of_birth = db.Column(db.Date, nullable=True)
+
+    @hybrid_property
+    def gestational_age(self):
+        r = requests.post("https://calc.filipelopes.med.br/api/v1/marcos-gravidez", json={"dum": self.last_menstrual_period, "data_exame": self.ultrasonographies[0].date, "ig_exame": {
+                          "semana": self.ultrasonographies[0].gestational_age_weeks, "dia": self.ultrasonographies[0].gestational_age_days}})
+        r.json()
+        return r['idade_gestacional']
+
+
+class LabTest(BaseModel):
+    __tablename__ = 'lab_tests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String)
+    abbreviation = db.Column(db.String)
+
+
+class PatientLabTest(BaseModel):
+    __tablename__ = 'patient_lab_tests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    lab_test_id = db.Column(db.Integer, ForeignKey('lab_tests.id'))
+    patient = relationship('Patient')
+    lab_test = relationship('LabTest')
+    value = db.Column(db.String)
+
+
+class ActiveTarget(BaseModel):
+    __tablename__ = 'active_targets'
+
+    id = db.Column(db.Integer, primary_key=True)
+    patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    reason = db.Column(db.String)
+    evolution = db.Column(db.String)
+    resolution_date = db.Column(db.Date)
+
 
 class LabTestArrival(BaseModel):
     __tablename__ = 'lab_test_arrivals'

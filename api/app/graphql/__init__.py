@@ -59,6 +59,13 @@ type_defs = gql(
             id: Int,
             item: LabTestArrivalInput
         ): LabTestArrival
+        """
+        Cria ou atualiza uma gravidez
+        """    
+        createOrUpdatePregnancy(
+            id: Int,
+            item: PregnancyInput
+        ): Pregnancy
     }
 
     input UserInput{
@@ -108,6 +115,48 @@ type_defs = gql(
         labTestDate: String
         "Data da retirada do exame pelo paciente no formato `yyyy-mm-dd`"
         pickDate: String
+    }
+
+    input PregnancyInput{
+        id: Int
+        "Paciente, ao colocar o ID, CPF ou CNS será vinculado ao usuário existente, preencher dados diferentes dos também existente para poder criar novo paciente"
+        patient: PatientInput
+        "Data da última menstruação no formato `yyyy-mm-dd`"
+        lastMenstrualPeriod: String
+        "Paridade no formato G9P9A0"
+        parity: String
+        "Data da primeira ultrassonografia"
+        pregnancyFirstUsgDate: String
+        "Dia na idade gestacional da primeira ultrassonografia"
+        pregnancyFirstUsgDay: Int
+        "Semana na idade gestacional da primeira ultrassonografia"
+        pregnancyFirstUsgWeek: Int
+        "Observações"
+        observations: String
+        "Risco da gestação"
+        risk: RiskEnum
+    }
+
+    input PatientInput {
+        id: ID
+        "Nome do paciente"
+        name: String
+        "Nome da mãe"
+        motherName: String
+        "Sexo do paciente, pode ser `MASCULINO` ou `FEMININO`"
+        sex: SexEnum
+        "Data de aniversário no formato `yyyy-mm-dd`"
+        dob: String
+        "CPF do paciente, apenas dígitos 75986523256"
+        cpf: String
+        "CNS do paciente, apenas dígitos 75986523256"
+        cns: String
+        "Peso do paciente"
+        weightKg: Float
+        "Telefone do paciente"
+        phone: String
+        "Id do agende de saúde"
+        communityHealthAgentId: Int
     }
 
     type AlembicVersion{
@@ -167,6 +216,13 @@ type_defs = gql(
         fema
     }
 
+    enum RiskEnum {
+        critical
+        high
+        regular
+        low
+    }
+
     type Patient {
         id: ID!
         name: String
@@ -181,22 +237,29 @@ type_defs = gql(
         professionals: [User]
     }
 
+    type Pregnancy {
+        id: ID!
+        patient: Patient
+        lastMenstrualPeriod: String
+        parity: String
+        gestationalAgeLmp: String
+        gestacionalAgeFirstUsg: String
+        ultrasonographies: [Ultrasonography]
+        observations: String
+        dayOfBirth: String
+    }
+
+    type Ultrasonography {
+        date: String
+        gestationalAgeWeeks: String
+        gestationalAgeDays: String
+        formatedGestationalAge: String
+    }
+
     type Institution {
         id: ID!
         name: String
         cnes: String
-    }
-
-    input PatientInput {
-        id: ID
-        name: String
-        motherName: String
-        sex: SexEnum
-        dob: String
-        cpf: String
-        cns: String
-        weightKg: Float
-        phone: String
     }
 
     type UserInstitutionRole{

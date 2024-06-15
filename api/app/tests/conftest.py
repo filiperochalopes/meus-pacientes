@@ -2,7 +2,6 @@ from gql import Client, gql
 from gql.transport.aiohttp import AIOHTTPTransport
 from datetime import datetime, timezone, timedelta
 from base64 import b64decode
-from app.env import DatabaseSettings
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 from app.models import BaseModel

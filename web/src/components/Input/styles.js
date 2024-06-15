@@ -19,6 +19,7 @@ export default styled.div`
 
   input,
   textarea {
+    font-family: "IBM Plex Sans", sans-serif;
     background-color: rgb(255, 255, 255);
     border: 1px solid rgb(143, 143, 162);
     border-radius: 2px;

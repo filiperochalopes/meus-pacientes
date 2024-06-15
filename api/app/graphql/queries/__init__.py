@@ -1,6 +1,5 @@
 import sqlalchemy as sa
 from sqlalchemy import create_engine
-from app.env import DatabaseSettings
 
 from app.graphql import query
 import app.graphql.queries.cid10
@@ -17,7 +16,7 @@ def resolve_hello(_, info):
 
 @query.field("alembicVersion")
 def get_alembic_version(*_):
-    engine = create_engine(DatabaseSettings().URL)
+    engine = create_engine('sqlite:///database.db', echo=True)
     with engine.begin() as conn:
         q = sa.text("SELECT version_num FROM alembic_version")
         resultset = conn.execute(q)

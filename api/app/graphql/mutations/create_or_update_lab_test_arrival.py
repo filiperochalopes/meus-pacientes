@@ -1,8 +1,7 @@
 from ariadne import convert_kwargs_to_snake_case
-from app.models import db, PrescriptionList, Patient, LabTestArrival
+from app.models import db, Patient, LabTestArrival
 from app.serializers import LabTestArrivalSchema
 from app.graphql import mutation
-from sqlalchemy import or_
 
 # Mutation to create or update lab test arrival
 @mutation.field('createOrUpdateLabTestArrival')

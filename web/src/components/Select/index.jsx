@@ -1,72 +1,191 @@
-import React from "react";
+import Container from "./styles";
+
+import PropTypes from "prop-types";
+import React, { useRef } from "react";
 import ReactSelect from "react-select";
-import Creatable from "react-select/creatable";
-import Container, { IconContainer } from "./styles";
-import { MdArrowDropDown } from "react-icons/md";
 import AsyncSelect from "react-select/async";
+import AsyncCreatableSelect from "react-select/async-creatable";
+import CreatableSelect from "react-select/creatable";
 
 const selectStyles = {
   container: (props) => ({
     ...props,
-    background: "#D9D9D9",
-    height: "2.5rem",
+    height: "2.2rem",
   }),
   indicatorSeparator: () => ({
-    border: "0",
+    border: "none",
   }),
-  control: (props) => ({
+  indicatorContainer: () => ({
+    border: "2px",
+    height: "21px",
+    svg: {
+      fill: "#000",
+    },
+  }),
+  control: (props, { isDisabled }) => ({
     ...props,
-    background: "#D9D9D9",
-    border: "0",
+    background: "#ffffff0",
+    borderWidth: "1px",
+    borderColor: "#8f8fa2",
+    borderRadius: "2px",
+    minHeight: "2rem",
+    height: "2rem",
+    opacity: isDisabled ? "0.4" : "1",
   }),
   placeholder: (props) => ({
     ...props,
     color: "#000",
-    fontSize: "1rem",
+    fontSize: "0.9rem",
+    height: "21px",
   }),
 };
 
 const Select = ({
-  error,
-  className,
-  name, 
   formik,
-  created = false,
-  components = {},
-  async = false,
+  name,
+  label,
+  description,
+  placeholder,
+  required,
+  creatable,
+  async,
   options,
-  ...rest
+  onBlur,
+  onChange,
+  isMulti,
+  isOptionDisabled,
+  onCreateOption,
+  disabled,
+  menuIsOpen,
 }) => {
-  const SelectType =
-    created && !async ? Creatable : async ? AsyncSelect : ReactSelect;
-
+  const SelectComponent =
+    creatable && !async
+      ? CreatableSelect
+      : async && creatable
+      ? AsyncCreatableSelect
+      : async
+      ? AsyncSelect
+      : ReactSelect;
+  let processedOptions = useRef([]);
+  if (options.length) {
+    // Verificando se o array é simples composto de strings ou de objetos, no primeiro duplicamos o valor para value e label
+    if (typeof options[0] === "string") {
+      processedOptions = options.map((e) => ({
+        value: e,
+        label: e,
+      }));
+    } else {
+      processedOptions = options;
+    }
+  }
   return (
-    <Container className={className}>
-      <SelectType
+    <Container>
+      <label to={name}>
+        {label || placeholder} {required && <span>*</span>}
+      </label>
+      {description && <p>{description}</p>}
+      <SelectComponent
         menuPosition="fixed"
-        components={{
-          DropdownIndicator: () => (
-            <IconContainer>
-              <MdArrowDropDown size={24} />
-            </IconContainer>
-          ),
-          ...components,
-        }}
+        placeholder={
+          isMulti ? "Selecione uma ou mais opções" : "Selecione uma opção"
+        }
         styles={selectStyles}
+        id={name}
         name={name}
-        options={options}
-        value={formik?.values[name]}
+        options={!async && processedOptions}
+        loadOptions={async && processedOptions}
+        cacheOptions={async && true}
+        defaultOptions={async && true}
+        formatCreateLabel={(inputValue) =>
+          `Clique para Adicionar "${inputValue}"`
+        }
+        onCreateOption={
+          onCreateOption &&
+          creatable &&
+          ((value) => {
+            onCreateOption(value);
+            // Verifica se o input aceita varias respostas ou apenas uma para setar o campo da melhor forma
+            if (isMulti) {
+              if (Array.isArray(formik.values[name])) {
+                formik.setFieldValue(name, [...formik.values[name], value]);
+              } else {
+                formik.setFieldValue(name, [value]);
+              }
+            } else {
+              formik.setFieldValue(name, value);
+            }
+            formik.setFieldTouched(name, true, true);
+          })
+        }
+        value={
+          Array.isArray(processedOptions)
+            ? Array.isArray(formik.values[name])
+              ? processedOptions.filter((e) =>
+                  formik.values[name].some((el) => e.value.includes(el))
+                )
+              : processedOptions.filter((e) => {
+                  return e.value === formik.values[name];
+                })
+              ? processedOptions.filter((e) => {
+                  return e.value === formik.values[name];
+                })
+              : { value: formik.values[name], label: formik.values[name] }
+            : formik.values[name]
+        }
         onChange={(e) => {
-          formik?.setFieldValue(name, e);
-          formik?.setFieldTouched(name, true);
+          if (onChange) onChange(e);
+          let value = e.value;
+          if (Array.isArray(e))
+            value = e.reduce((acc, cur) => [cur.value, ...acc], []);
+          if (!Array.isArray(processedOptions)) value = e;
+          formik.setFieldValue(name, value);
+          formik.setFieldTouched(name, true, true);
         }}
-        {...rest}
+        onBlur={(e) => {
+          if (onBlur) onBlur(e);
+        }}
+        isMulti={isMulti}
+        isOptionDisabled={isOptionDisabled}
+        isDisabled={disabled}
+        menuIsOpen={menuIsOpen || undefined}
       />
-      {formik?.errors[name] && formik.touched[name] && (
-        <ErrorText>{formik.errors[name]}</ErrorText>
-      )}
+      {formik?.errors[name] &&
+        (formik.touched[name] || formik.submitCount > 0) && (
+          <span className="error">{formik.errors[name]}</span>
+        )}
     </Container>
   );
+};
+
+Select.propTypes = {
+  formik: PropTypes.object,
+  name: PropTypes.string.isRequired,
+  type: PropTypes.string,
+  label: PropTypes.string,
+  required: PropTypes.bool,
+  creatable: PropTypes.bool,
+  async: PropTypes.bool,
+  disabled: PropTypes.bool,
+  isMulti: PropTypes.bool,
+  menuIsOpen: PropTypes.bool,
+  options: PropTypes.oneOfType([PropTypes.array, PropTypes.func]),
+  isOptionDisabled: PropTypes.func,
+  onCreateOption: PropTypes.func,
+  description: PropTypes.string || PropTypes.node,
+  placeholder: PropTypes.string,
+  onChange: PropTypes.func,
+  onBlur: PropTypes.func,
+};
+
+Select.defaultProps = {
+  placeholder: "Selecione um item",
+  required: false,
+  creatable: false,
+  isMulti: false,
+  async: false,
+  disabled: false,
+  menuIsOpen: false,
+  options: [],
 };
 
 export default Select;

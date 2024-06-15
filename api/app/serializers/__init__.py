@@ -1,6 +1,6 @@
 import sys
 from flask_marshmallow import Marshmallow
-from app.models import Patient, User, Cid10, PrescriptionList, UserInstitutionRole, Institution, Role, LabTestArrival
+from app.models import Patient, User, Cid10, ContinuousPrescription, UserInstitutionRole, Institution, Role, LabTestArrival
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
 
@@ -74,9 +74,9 @@ class PatientSchema(CamelCaseSchema):
     professionals = fields.List(sqa_fields.Nested(UserSchema))
 
 
-class PrescriptionListSchema(CamelCaseSchema):
+class ContinuousPrescriptionSchema(CamelCaseSchema):
     class Meta:
-        model = PrescriptionList
+        model = ContinuousPrescription
         include_relationships = True
         include_fk = True
 
