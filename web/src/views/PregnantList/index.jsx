@@ -70,7 +70,12 @@ const PrescriptionList = () => {
             name="patientDob"
             formik={formik}
           />
-          <Select label="Agente de Saúde" name="patientTacs" formik={formik} options={[]} />
+          <Select
+            label="Agente de Saúde"
+            name="patientTacs"
+            formik={formik}
+            options={[]}
+          />
           <Input
             label="Paridade"
             description="Formato deve ser G9P9A0"

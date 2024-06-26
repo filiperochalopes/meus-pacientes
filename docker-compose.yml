@@ -22,7 +22,6 @@ services:
       - ./api:/app
     environment:
       - SECRET_KEY=${SECRET_KEY}
-      - MASTER_KEY=${MASTER_KEY}
       - POSTGRES_HOST=${POSTGRES_HOST:?nome do host}
       - POSTGRES_NAME=${POSTGRES_NAME:?nome do BD ausente}
       - POSTGRES_USER=${POSTGRES_USER:?usuario do BD ausente}

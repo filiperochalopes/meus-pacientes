@@ -6,6 +6,9 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - MASTER_KEY=${MASTER_KEY}
 
     volumes:
       - ../..:/workspaces:cached

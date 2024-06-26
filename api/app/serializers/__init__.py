@@ -1,6 +1,6 @@
 import sys
 from flask_marshmallow import Marshmallow
-from app.models import Patient, User, Cid10, ContinuousPrescription, UserInstitutionRole, Institution, Role, LabTestArrival
+from app.models import Patient, User, Cid10, ContinuousPrescription, UserInstitutionRole, Institution, Role, LabTestArrival, Pregnancy, Ultrasonography, LabTest, PregnancyLabTest
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
 
@@ -40,13 +40,16 @@ class Cid10Schema(CamelCaseSchema):
     class Meta:
         model = Cid10
 
+
 class InstitutionSchema(CamelCaseSchema):
     class Meta:
         model = Institution
 
+
 class RoleSchema(CamelCaseSchema):
     class Meta:
         model = Role
+
 
 class UserInstitutionRoleSchema(CamelCaseSchema):
     class Meta:
@@ -61,7 +64,9 @@ class UserSchema(CamelCaseSchema):
         model = User
 
     dob = fields.Date(format='%d-%m-%Y')
-    institution_roles = fields.List(sqa_fields.Nested(UserInstitutionRoleSchema))
+    institution_roles = fields.List(
+        sqa_fields.Nested(UserInstitutionRoleSchema))
+
 
 class PatientSchema(CamelCaseSchema):
     class Meta:
@@ -72,6 +77,33 @@ class PatientSchema(CamelCaseSchema):
     sex = EnumToNameField(attribute=('sex'))
     age = fields.Str(dump_only=True)
     professionals = fields.List(sqa_fields.Nested(UserSchema))
+    community_health_agent = fields.Nested(UserSchema)
+
+
+class UltrasonographySchema(CamelCaseSchema):
+    class Meta:
+        model = Ultrasonography
+
+
+class LabTestSchema(CamelCaseSchema):
+    class Meta:
+        model = LabTest
+
+
+class PregnancyLabTestSchema(CamelCaseSchema):
+    class Meta:
+        model = PregnancyLabTest
+
+
+class PregnancySchema(CamelCaseSchema):
+    class Meta:
+        model = Pregnancy
+        include_relationships = True
+        include_fk = True
+
+    patient = sqa_fields.Nested(PatientSchema)
+    ultrasonographies = fields.List(sqa_fields.Nested(UltrasonographySchema))
+    lab_tests = fields.List(sqa_fields.Nested(PregnancyLabTestSchema))
 
 
 class ContinuousPrescriptionSchema(CamelCaseSchema):
@@ -83,10 +115,11 @@ class ContinuousPrescriptionSchema(CamelCaseSchema):
     origin = EnumToValueField(attribute=('origin'))
     patient = sqa_fields.Nested(PatientSchema)
 
+
 class LabTestArrivalSchema(CamelCaseSchema):
     class Meta:
         model = LabTestArrival
         include_relationships = True
         include_fk = True
-    
+
     patient = sqa_fields.Nested(PatientSchema)

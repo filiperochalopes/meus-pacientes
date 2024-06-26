@@ -6,6 +6,8 @@ import app.graphql.queries.cid10
 import app.graphql.queries.me
 import app.graphql.queries.get_prescription_list
 import app.graphql.queries.get_lab_test_arrival
+import app.graphql.queries.pregnants
+import app.graphql.queries.community_health_agents
 
 
 @query.field("hello")

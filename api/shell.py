@@ -118,9 +118,10 @@ def create_tacs_bulk():
                  password_hash=User.generate_password("senha@123")),
         ]
         db.session.bulk_save_objects(users)
-        db.session.flush
+        db.session.flush()
 
         for user in users:
+            user = db.session.query(User).filter(User.cpf==user.cpf).first()
             user_institution_role = UserInstitutionRole(
                 user_id=user.id, institution_id=institution_id, role_id=db.session.query(
                     Role).filter(Role.name == "tacs").first().id)

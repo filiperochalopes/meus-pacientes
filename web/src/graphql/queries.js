@@ -1,5 +1,36 @@
 import { gql } from "@apollo/client";
 
+export const ME = gql`
+query Me {
+  me {
+    id
+    name
+    institutionRoles {
+      institution {
+        name
+      }
+      role {
+        name
+      }
+    }
+  }
+}
+`;
+
+export const COMMUNITY_HEALTH_AGENTS = gql`
+query CommunityHealthAgents {
+  communityHealthAgents{
+    name
+    institutionRoles{
+      institution{
+        id
+        name
+      }
+    }
+  }
+}
+`;
+
 export const GET_PRESCRIPTION_LIST = gql`
   query GetPrescriptionList {
     getPrescriptionList {

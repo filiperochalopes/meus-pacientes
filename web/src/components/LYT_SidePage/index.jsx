@@ -14,7 +14,9 @@ const SidePageLayout = ({
         <main>{children}</main>
         <div>
           {sideComponent || (
-            <div className="sideComponent">Seja Bem Vindo!</div>
+            <div className="sideComponent">
+              <p>Seja Bem Vindo!</p>
+            </div>
           )}
         </div>
       </div>

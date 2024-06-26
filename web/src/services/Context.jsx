@@ -2,35 +2,24 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 
-const Context = createContext(null);
+const Context = createContext({});
 
 const ContextProvider = ({ children }) => {
   const [user, setUser] = useState();
   const navigate = useNavigate();
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem("meuspaciente:token");
     if (!token) {
       return;
     }
 
     const decode = jwt_decode(token);
-
     setUser({
       ...decode,
       token,
     });
   }, []);
-
-  function updateUser(token) {
-    if (token) {
-      const decode = jwt_decode(token);
-      setUser({
-        ...decode,
-        token,
-      });
-    }
-  }
 
   function logout() {
     localStorage.removeItem("token");
@@ -39,13 +28,13 @@ const ContextProvider = ({ children }) => {
   }
 
   return (
-    <Context.Provider value={{ user, updateUser, logout }}>
+    <Context.Provider value={{ user, setUser, logout }}>
       {children}
     </Context.Provider>
   );
 };
 
-const useContextProvider = () => useContext(Context);
+const useAppContext = () => useContext(Context);
 
-export { useContextProvider };
+export { useAppContext };
 export default ContextProvider;

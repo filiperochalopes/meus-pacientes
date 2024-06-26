@@ -9,17 +9,17 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import validationSchema from "./validationSchema";
 import { useMutation } from "@apollo/client";
-import { SIGNING } from "graphql/mutations";
+import { SIGNIN } from "graphql/mutations";
 import { useEffect } from "react";
-import { useContextProvider } from "services/Context";
+import { useAppContext } from "services/Context";
 import useHandleErrors from "services/hooks/useHandleErrors";
 import SidePageLayout from "components/LYT_SidePage";
 
 function Login() {
-  const navigate = useNavigate();
-  const [signing, { loading }] = useMutation(SIGNING);
-  // const { updateUser } = useContextProvider();
-  const { handleErrors } = useHandleErrors();
+  const navigate = useNavigate(),
+    [signing, { data, loading, error }] = useMutation(SIGNIN),
+    { setUser } = useAppContext(),
+    { handleErrors } = useHandleErrors();
 
   const formik = useFormik({
     initialValues: {
@@ -32,11 +32,7 @@ function Login() {
         return;
       }
       try {
-        const response = await signing({ variables: values });
-        console.log(response.data);
-        localStorage.setItem("token", response.data.signin.token);
-        // updateUser(response.data.signin.token);
-        navigate("/pacientes");
+        signing({ variables: values });
       } catch (e) {
         handleErrors(e);
       }
@@ -44,13 +40,22 @@ function Login() {
   });
 
   useEffect(() => {
-    const getToken = localStorage.getItem("token");
-    if (getToken) {
-      navigate("/pacientes", {
-        replace: true,
-      });
+    if (data) {
+      // Salva token em localstorage
+      console.log(data.signin);
+      localStorage.setItem("meuspacientes:token", data.signin.token);
+      setUser(data.signin);
+      navigate("/");
     }
-  }, [navigate]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  useEffect(() => {
+    if (error) {
+      handleErrors(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]);
 
   return (
     <SidePageLayout>

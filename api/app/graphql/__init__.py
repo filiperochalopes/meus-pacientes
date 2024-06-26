@@ -16,6 +16,10 @@ type_defs = gql(
        getPrescriptionList: [PrescriptionListItem]
        "Retorna lista de chegada de exames"
        getLabTestArrival(cpf: String): [LabTestArrival]
+       "Retorna as pacientes grávidas"
+       pregnants: [Pregnancy]
+       "Retorna os Agentes de Saúde"
+       communityHealthAgents: [User]
     }
 
     type Mutation {
@@ -235,6 +239,18 @@ type_defs = gql(
         weightKg: Float
         phone: String
         professionals: [User]
+        communityHealthAgent: User
+    }
+
+    type LabTest{
+        id: ID!
+        name: String
+        abbreviation: String
+    }
+
+    type PregnancyLabTest {
+        labTest: LabTest
+        value: String
     }
 
     type Pregnancy {
@@ -245,6 +261,7 @@ type_defs = gql(
         gestationalAgeLmp: String
         gestacionalAgeFirstUsg: String
         ultrasonographies: [Ultrasonography]
+        labTests: [PregnancyLabTest]
         observations: String
         dayOfBirth: String
     }

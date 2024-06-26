@@ -1,4 +1,4 @@
-import InputContainer, {ErrorText} from "./styles";
+import InputContainer, { ErrorText } from "./styles";
 
 import React from "react";
 import PropTypes from "prop-types";
@@ -15,14 +15,10 @@ function Input({
   onFocus,
   disabled,
 }) {
-
   return (
     <InputContainer disabled={disabled}>
       {placeholder && (
-        <label
-          disabled={disabled}
-          to={name}
-        >
+        <label disabled={disabled} to={name}>
           {label || placeholder} {required && <span>*</span>}
         </label>
       )}

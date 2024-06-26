@@ -4,6 +4,15 @@ Uma aplicação para facilitar o gerenciamento de grupos na Atenção Básica. S
 
 Sem falar que a reponsividade desses sistemas não são boas e não atendem a demandas específicas, com esse ituito criei esse programa para gerenciar nossos pacientes, grupos, renovação de prescrições, dentre outros.
 
+## Ambiente de desenvolvimento, configurações iniciais
+
+```sh
+cd api
+rm -rf instance
+flask db upgrade
+flask seed
+```
+
 # Roadmap
 
 - [ ] Criação de MVP com criação de items da lista em graphql playground evisualização com tabelas do [DataTable](https://primereact.org/datatable/)

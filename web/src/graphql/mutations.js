@@ -8,9 +8,21 @@ export const CREATE_USER = gql`
   }
 `;
 
-export const SIGNING = gql`
+export const SIGNIN = gql`
   mutation signing($email: String!, $password: String!) {
     signin(email: $email, password: $password) {
+      user {
+        id
+        name
+        institutionRoles {
+          institution {
+            name
+          }
+          role {
+            name
+          }
+        }
+      }
       token
     }
   }

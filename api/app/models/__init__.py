@@ -229,6 +229,7 @@ class Pregnancy(BaseModel):
 
     id = db.Column(db.Integer, primary_key=True)
     patient_id = db.Column(db.Integer, ForeignKey('patients.id'))
+    patient = relationship('Patient')
     parity = db.Column(db.String)
     last_menstrual_period = db.Column(db.Date)
     ultrasonographies = relationship('Ultrasonography', uselist=True)
