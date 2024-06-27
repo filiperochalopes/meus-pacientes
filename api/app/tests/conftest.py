@@ -1,10 +1,5 @@
-from gql import Client, gql
+from gql import Client
 from gql.transport.aiohttp import AIOHTTPTransport
-from datetime import datetime, timezone, timedelta
-from base64 import b64decode
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
-from app.models import BaseModel
 from app.env import GRAPHQL_MUTATION_QUERY_URL, QUERIES_DIRECTORY
 import pytest
 
@@ -29,9 +24,10 @@ def client():
 #     # Create a GraphQL client using the defined transport
 #     return Client(transport=transport, fetch_schema_from_transport=True)
 
+
 def get_query_from_txt(filename: str):
-    '''Retorna o texto de uma querie armazenada em txt'''
-    with open(f'{QUERIES_DIRECTORY}/{filename}.txt', 'r') as file:
+    """Retorna o texto de uma querie armazenada em txt"""
+    with open(f"{QUERIES_DIRECTORY}/{filename}.txt", "r") as file:
         request = file.read()
     return request
 

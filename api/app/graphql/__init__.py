@@ -289,7 +289,8 @@ type_defs = gql(
         id: ID!
         name: String
     }
-''')
+'''
+)
 
 # Initialize query
 query = ObjectType("Query")

@@ -1,23 +1,22 @@
 from gql import gql
-import jwt
-from app.env import SECRET
 from app.tests.conftest import get_query_from_txt
+
 
 class TestFlow:
     # create_user_query = gql(get_query_from_txt('create_user'))
-    hello_query = gql(get_query_from_txt('hello'))
+    hello_query = gql(get_query_from_txt("hello"))
     # signin_query = gql(get_query_from_txt('signin'))
-    alembic_version_query = gql(get_query_from_txt('alembic_version'))
+    alembic_version_query = gql(get_query_from_txt("alembic_version"))
 
     def test_graphql_query(self, client):
-        '''Verifica se a API está funcional'''
+        """Verifica se a API está funcional"""
         result = client.execute(self.hello_query)
-        assert 'Hello' in result['hello']
+        assert "Hello" in result["hello"]
 
     def test_migration(self, client):
-        '''Verifica se o banco de dados está com algum registro de migração'''
+        """Verifica se o banco de dados está com algum registro de migração"""
         result = client.execute(self.alembic_version_query)
-        assert isinstance(result['alembicVersion']['version'], str)
+        assert isinstance(result["alembicVersion"]["version"], str)
 
     # def test_create_user(self, client):
     #     try:

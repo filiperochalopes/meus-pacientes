@@ -1,6 +1,19 @@
 import sys
 from flask_marshmallow import Marshmallow
-from app.models import Patient, User, Cid10, ContinuousPrescription, UserInstitutionRole, Institution, Role, LabTestArrival, Pregnancy, Ultrasonography, LabTest, PregnancyLabTest
+from app.models import (
+    Patient,
+    User,
+    Cid10,
+    ContinuousPrescription,
+    UserInstitutionRole,
+    Institution,
+    Role,
+    LabTestArrival,
+    Pregnancy,
+    Ultrasonography,
+    LabTest,
+    PregnancyLabTest,
+)
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
 
@@ -18,7 +31,6 @@ class CamelCaseSchema(ma.SQLAlchemyAutoSchema):
     """
 
     def on_bind_field(self, field_name, field_obj):
-
         field_obj.data_key = camelcase(field_obj.data_key or field_name)
 
 
@@ -63,9 +75,8 @@ class UserSchema(CamelCaseSchema):
     class Meta:
         model = User
 
-    dob = fields.Date(format='%d-%m-%Y')
-    institution_roles = fields.List(
-        sqa_fields.Nested(UserInstitutionRoleSchema))
+    dob = fields.Date(format="%d-%m-%Y")
+    institution_roles = fields.List(sqa_fields.Nested(UserInstitutionRoleSchema))
 
 
 class PatientSchema(CamelCaseSchema):
@@ -74,7 +85,7 @@ class PatientSchema(CamelCaseSchema):
         include_relationships = True
         include_fk = True
 
-    sex = EnumToNameField(attribute=('sex'))
+    sex = EnumToNameField(attribute=("sex"))
     age = fields.Str(dump_only=True)
     professionals = fields.List(sqa_fields.Nested(UserSchema))
     community_health_agent = fields.Nested(UserSchema)
@@ -112,7 +123,7 @@ class ContinuousPrescriptionSchema(CamelCaseSchema):
         include_relationships = True
         include_fk = True
 
-    origin = EnumToValueField(attribute=('origin'))
+    origin = EnumToValueField(attribute=("origin"))
     patient = sqa_fields.Nested(PatientSchema)
 
 

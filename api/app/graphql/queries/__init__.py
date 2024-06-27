@@ -16,13 +16,12 @@ def resolve_hello(_, info):
     user_agent = request.headers.get("User-Agent", "Guest")
     return "Hello, %s!" % user_agent
 
+
 @query.field("alembicVersion")
 def get_alembic_version(*_):
-    engine = create_engine('sqlite:///database.db', echo=True)
+    engine = create_engine("sqlite:///database.db", echo=True)
     with engine.begin() as conn:
         q = sa.text("SELECT version_num FROM alembic_version")
         resultset = conn.execute(q)
         results_as_dict = resultset.mappings().all()
-    return {
-        "version": results_as_dict[0]['version_num']
-    }
+    return {"version": results_as_dict[0]["version_num"]}
