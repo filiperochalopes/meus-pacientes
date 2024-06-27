@@ -32,6 +32,12 @@ const SimplePageLayout = ({ children, showMenu }) => {
               <li>
                 <Link to="/gestantes">Gestantes</Link>
               </li>
+              <li>
+                <Link to="/gestantes">Gerenciamentos de Usuários</Link>
+              </li>
+              <li>
+                <Link to="/gestantes">Minha Conta</Link>
+              </li>
             </ul>
           </aside>
         )}

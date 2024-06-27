@@ -264,6 +264,13 @@ type_defs = gql(
         labTests: [PregnancyLabTest]
         observations: String
         dayOfBirth: String
+        risk: RiskLevel
+    }
+
+    type RiskLevel {
+        id: ID!
+        name: String
+        description: String
     }
 
     type Ultrasonography {

@@ -64,6 +64,41 @@ export const GET_PRESCRIPTION_LIST = gql`
   }
 `;
 
+export const PREGNANTS = gql`
+query Pregnants{
+  pregnants{
+    patient{
+      name
+      dob
+      age
+      communityHealthAgent{
+        name
+      }
+    }
+    risk {
+      name
+      description
+    }
+    ultrasonographies{
+      date
+      gestationalAgeDays
+      gestationalAgeWeeks
+      formatedGestationalAge
+    }
+    labTests{
+      labTest{
+        name
+      }
+      value
+    }
+    lastMenstrualPeriod
+    parity
+    dayOfBirth
+    observations
+  }
+}
+`;
+
 export const CID10 = gql`
   query getCid10($query: String) {
     cid10(query: $query) {

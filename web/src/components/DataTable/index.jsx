@@ -76,14 +76,15 @@ const InternalDataTable = ({
       onFilter={onGlobalFilterChange}
       emptyMessage="Sem informações."
       {...props}
+      rowClassName={(rowData) => props.rowClassName(rowData)}
     >
       {columns.map((column) => {
         return (
           <Column
             key={column.field}
             field={column.field}
+            body={column.body}
             header={column.header}
-            body={column.body || undefined}
             editor={(options) => textEditor(options)}
             onCellEditComplete={onCellEditComplete}
           ></Column>

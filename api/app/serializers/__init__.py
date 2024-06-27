@@ -13,6 +13,7 @@ from app.models import (
     Ultrasonography,
     LabTest,
     PregnancyLabTest,
+    RiskLevel
 )
 from marshmallow import fields
 from marshmallow_sqlalchemy import fields as sqa_fields
@@ -105,7 +106,9 @@ class PregnancyLabTestSchema(CamelCaseSchema):
     class Meta:
         model = PregnancyLabTest
 
-
+class RiskLevelSchema(CamelCaseSchema):
+    class Meta:
+        model = RiskLevel
 class PregnancySchema(CamelCaseSchema):
     class Meta:
         model = Pregnancy
@@ -115,6 +118,8 @@ class PregnancySchema(CamelCaseSchema):
     patient = sqa_fields.Nested(PatientSchema)
     ultrasonographies = fields.List(sqa_fields.Nested(UltrasonographySchema))
     lab_tests = fields.List(sqa_fields.Nested(PregnancyLabTestSchema))
+    risk = sqa_fields.Nested(RiskLevelSchema)
+    gestational_age_lmp = fields.Str(dump_only=True)
 
 
 class ContinuousPrescriptionSchema(CamelCaseSchema):

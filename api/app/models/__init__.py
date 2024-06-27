@@ -238,22 +238,6 @@ class Pregnancy(BaseModel):
     risk = relationship("RiskLevel", uselist=False)
     day_of_birth = db.Column(db.Date, nullable=True)
 
-    @hybrid_property
-    def gestational_age(self):
-        r = requests.post(
-            "https://calc.filipelopes.med.br/api/v1/marcos-gravidez",
-            json={
-                "dum": self.last_menstrual_period,
-                "data_exame": self.ultrasonographies[0].date,
-                "ig_exame": {
-                    "semana": self.ultrasonographies[0].gestational_age_weeks,
-                    "dia": self.ultrasonographies[0].gestational_age_days,
-                },
-            },
-        )
-        r.json()
-        return r["idade_gestacional"]
-
 
 class LabTest(BaseModel):
     __tablename__ = "lab_tests"

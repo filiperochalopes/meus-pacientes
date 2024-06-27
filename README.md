@@ -13,6 +13,14 @@ flask db upgrade
 flask seed
 ```
 
+Lint python
+
+```sh
+cd api
+ruff check --fix
+ruff format
+```
+
 # Roadmap
 
 - [ ] Criação de MVP com criação de items da lista em graphql playground evisualização com tabelas do [DataTable](https://primereact.org/datatable/)

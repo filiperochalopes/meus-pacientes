@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import {
   COMMUNITY_HEALTH_AGENTS,
   GET_PRESCRIPTION_LIST,
+  PREGNANTS,
 } from "graphql/queries";
 import { CREATE_OR_UPDATE_PREGNANCY } from "graphql/mutations";
 import { useMutation, useQuery } from "@apollo/client";
@@ -14,8 +15,8 @@ import Select from "components/Select";
 
 // the function component to display a DataTable from primereact
 const PrescriptionList = () => {
-  const [prescriptionList, setPrescriptionList] = useState([]),
-    { data, loading } = useQuery(GET_PRESCRIPTION_LIST),
+  const [pregnants, setPregnants] = useState([]),
+    { data, loading } = useQuery(PREGNANTS),
     { data: communityHealthAgentsData } = useQuery(COMMUNITY_HEALTH_AGENTS),
     [createOrUpdatePregnancy, { loading: pregnancyLoading }] = useMutation(
       CREATE_OR_UPDATE_PREGNANCY
@@ -55,24 +56,17 @@ const PrescriptionList = () => {
 
   useEffect(() => {
     if (data) {
-      setPrescriptionList(data.getPrescriptionList);
+      setPregnants(data.pregnants)
+      console.log(data.pregnants);
     }
   }, [data]);
 
-  useEffect(() => {
-    if (communityHealthAgentsData) {
-      console.log(communityHealthAgentsData);
-    }
-  }, [communityHealthAgentsData]);
   return (
     <LYTSimplePage title="Lista de Gestantes">
       <DataTable
         globalFilterFields={["patient.name"]}
-        rowClassName={({ pregnancy }) => ({
-          "bg-high-risk": pregnancy?.risk === "HIGH",
-        })}
         loading={loading}
-        value={prescriptionList}
+        value={pregnants}
         emptyMessage="Não foram encontrados gestantes."
         footer="* Utilizar idade gestacional pela DUM se diferença entre data pela primeira USG e DUM for menor ou maior que 8% (margem de erro)"
         columns={[
@@ -86,18 +80,25 @@ const PrescriptionList = () => {
           },
           {
             header: "Agente Saúde",
-            field: "patient.tacs",
+            field: "patient.communityHealthAgent.name",
           },
           {
             header: "Detalhes",
-            body: ({ pregnancy }) =>
-              `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lmp}) e ${pregnancy?.gestacionalAgeFirstUs} pela USG de ${pregnancy?.us[0]?.age}`,
+            body: (pregnancy) => {
+              console.log(pregnancy)
+              return `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lmp}) e ${pregnancy?.gestacionalAgeFirstUs} pela USG de ${pregnancy?.ultrasonographies[0]?.age}`
+            }
           },
           {
             header: "Observações",
-            field: "pregnancy.observations",
+            field: "observations",
           },
         ]}
+        rowClassName={(data) => {
+          return {
+            "bg-high-risk": data?.risk?.name === "alto",
+          }
+        }}
       >
         <form onSubmit={formik.handleSubmit}>
           <Input label="Nome da Paciente" name="patientName" formik={formik} />
