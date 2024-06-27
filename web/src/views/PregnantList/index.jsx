@@ -1,7 +1,11 @@
 import LYTSimplePage from "components/LYT_SimplePage";
 import { useEffect, useState } from "react";
-import { GET_PRESCRIPTION_LIST } from "graphql/queries";
-import { useQuery } from "@apollo/client";
+import {
+  COMMUNITY_HEALTH_AGENTS,
+  GET_PRESCRIPTION_LIST,
+} from "graphql/queries";
+import { CREATE_OR_UPDATE_PREGNANCY } from "graphql/mutations";
+import { useMutation, useQuery } from "@apollo/client";
 import DataTable from "components/DataTable";
 import Input from "components/Input";
 import Button from "components/Button";
@@ -12,12 +16,40 @@ import Select from "components/Select";
 const PrescriptionList = () => {
   const [prescriptionList, setPrescriptionList] = useState([]),
     { data, loading } = useQuery(GET_PRESCRIPTION_LIST),
+    { data: communityHealthAgentsData } = useQuery(COMMUNITY_HEALTH_AGENTS),
+    [createOrUpdatePregnancy, { loading: pregnancyLoading }] = useMutation(
+      CREATE_OR_UPDATE_PREGNANCY
+    ),
     formik = useFormik({
       initialValues: {
         patientName: "",
       },
-      onSubmit: (values) => {
-        console.log(values);
+      onSubmit: ({
+        patientDob,
+        patientName,
+        patientTacs: communityHealthAgentId,
+        pregnancyFirstUsgDate,
+        pregnancyFirstUsgDay,
+        pregnancyFirstUsgWeek,
+        pregnancyLmp: lastMenstrualPeriod,
+        pregnancyObservations: observations,
+        pregnancyParity: parity,
+        pregnancyRisk: risk,
+      }) => {
+        createOrUpdatePregnancy({
+          variables: {
+            patientName,
+            patientDob,
+            lastMenstrualPeriod,
+            parity,
+            pregnancyFirstUsgDate,
+            pregnancyFirstUsgDay,
+            pregnancyFirstUsgWeek,
+            observations,
+            risk,
+            communityHealthAgentId: Number(communityHealthAgentId),
+          },
+        });
       },
     });
 
@@ -27,6 +59,11 @@ const PrescriptionList = () => {
     }
   }, [data]);
 
+  useEffect(() => {
+    if (communityHealthAgentsData) {
+      console.log(communityHealthAgentsData);
+    }
+  }, [communityHealthAgentsData]);
   return (
     <LYTSimplePage title="Lista de Gestantes">
       <DataTable
@@ -62,7 +99,7 @@ const PrescriptionList = () => {
           },
         ]}
       >
-        <form>
+        <form onSubmit={formik.handleSubmit}>
           <Input label="Nome da Paciente" name="patientName" formik={formik} />
           <Input
             type="date"
@@ -70,12 +107,16 @@ const PrescriptionList = () => {
             name="patientDob"
             formik={formik}
           />
-          <Select
-            label="Agente de Saúde"
-            name="patientTacs"
-            formik={formik}
-            options={[]}
-          />
+          {communityHealthAgentsData && (
+            <Select
+              label="Agente de Saúde"
+              name="patientTacs"
+              formik={formik}
+              options={communityHealthAgentsData?.communityHealthAgents.map(
+                (e) => ({ label: e.name, value: e.id })
+              )}
+            />
+          )}
           <Input
             label="Paridade"
             description="Formato deve ser G9P9A0"
@@ -86,7 +127,7 @@ const PrescriptionList = () => {
           <Input
             type="date"
             label="Data da Primeira Ultrassonografia"
-            name="pregnancyFirstUsDate"
+            name="pregnancyFirstUsgDate"
             formik={formik}
           />
           <Input
@@ -101,13 +142,23 @@ const PrescriptionList = () => {
             name="pregnancyFirstUsgDay"
             formik={formik}
           />
+          <Select
+            label="Risco Gestacional"
+            name="pregnancyRisk"
+            formik={formik}
+            options={[
+              { label: "Habitual", value: "regular" },
+              { label: "Alto", value: "high" },
+              { label: "Crítico", value: "critical" },
+            ]}
+          />
           <Input
             type="textarea"
             label="Observações"
             name="pregnancyObservations"
             formik={formik}
           />
-          <Button>Enviar</Button>
+          <Button loading={pregnancyLoading}>Enviar</Button>
         </form>
       </DataTable>
     </LYTSimplePage>

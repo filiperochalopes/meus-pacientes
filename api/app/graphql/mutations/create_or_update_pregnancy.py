@@ -58,13 +58,14 @@ def create_or_update_pregnancy(_, info, item: dict):
 
         item['patient_id'] = patient.id
 
+        pregnancy_first_usg_week = item.pop('pregnancy_first_usg_week', None)
+        pregnancy_first_usg_day = item.pop('pregnancy_first_usg_day', None)
+        pregnancy_first_usg_date = item.pop('pregnancy_first_usg_date', None)
         pregnancy = Pregnancy(**item)
         db.session.flush()
         if item.get('pregnancy_first_usg_date'):
-            ultrasonography = Ultrasonography(gestational_age_weeks=item.get('pregnancy_first_usg_week'), gestational_age_days=item.get('pregnancy_first_usg_day'), date=datetime.date.fromisoformat(item.get('pregnancy_first_usg_date')), pregnancy_id=pregnancy.id)
-        item.pop('pregnancy_first_usg_week', None)
-        item.pop('pregnancy_first_usg_day', None)
-        item.pop('pregnancy_first_usg_date', None)
+            ultrasonography = Ultrasonography(gestational_age_weeks=pregnancy_first_usg_week, gestational_age_days=pregnancy_first_usg_day, date=datetime.date.fromisoformat(pregnancy_first_usg_date), pregnancy_id=pregnancy.id)
+        
         db.session.add(pregnancy)
         db.session.commit()
 

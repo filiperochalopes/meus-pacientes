@@ -50,3 +50,39 @@ export const CREATE_OR_UPDATE_LAB_TEST_ARRIVAL = gql`
     }
   }
 `;
+
+export const CREATE_OR_UPDATE_PREGNANCY = gql`
+  mutation CreateOrUpdatePregnancy(
+    $id: Int
+    $patientName: String!
+    $patientDob: String!
+    $lastMenstrualPeriod: String!
+    $parity: String!
+    $pregnancyFirstUsgDate: String
+    $pregnancyFirstUsgDay: Int
+    $pregnancyFirstUsgWeek: Int
+    $observations: String
+    $risk: RiskEnum
+    $communityHealthAgentId: Int
+  ) {
+    createOrUpdatePregnancy(
+      item: {
+        id: $id
+        patient: {
+          name: $patientName
+          dob: $patientDob
+          communityHealthAgentId: $communityHealthAgentId
+        }
+        lastMenstrualPeriod: $lastMenstrualPeriod
+        parity: $parity
+        pregnancyFirstUsgDate: $pregnancyFirstUsgDate
+        pregnancyFirstUsgDay: $pregnancyFirstUsgDay
+        pregnancyFirstUsgWeek: $pregnancyFirstUsgWeek
+        observations: $observations
+        risk: $risk
+      }
+    ) {
+      id
+    }
+  }
+`;
