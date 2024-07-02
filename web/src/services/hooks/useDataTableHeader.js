@@ -2,6 +2,7 @@ const useDataTableHeader = ({
   globalFilterValue,
   onGlobalFilterChange,
   handleInsertModelBtn,
+  searchPlaceholder = "Digite para Pesquisar",
 }) => {
   return (
     <div className="flex justify-content-end">
@@ -11,7 +12,7 @@ const useDataTableHeader = ({
           type="search"
           value={globalFilterValue}
           onChange={onGlobalFilterChange}
-          placeholder="Buscar por nome ou medicação"
+          placeholder={searchPlaceholder}
         />
         {handleInsertModelBtn && (
           <button onClick={handleInsertModelBtn}>

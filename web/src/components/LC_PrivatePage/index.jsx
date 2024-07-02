@@ -5,6 +5,6 @@ import { useAppContext } from "services/Context";
 export default ({ children }) => {
   const { user, userIsLoading } = useAppContext();
 
-  if (!user?.email && !userIsLoading) return <Navigate to="/" replace />;
+  if (!user?.id && !userIsLoading) return <Navigate to="/" replace />;
   return <section>{children}</section>;
 };

@@ -56,7 +56,7 @@ const PrescriptionList = () => {
 
   useEffect(() => {
     if (data) {
-      setPregnants(data.pregnants)
+      setPregnants(data.pregnants);
       console.log(data.pregnants);
     }
   }, [data]);
@@ -69,6 +69,8 @@ const PrescriptionList = () => {
         value={pregnants}
         emptyMessage="Não foram encontrados gestantes."
         footer="* Utilizar idade gestacional pela DUM se diferença entre data pela primeira USG e DUM for menor ou maior que 8% (margem de erro)"
+        canUpdate
+        formik={formik}
         columns={[
           {
             header: "Nome do Paciente",
@@ -85,22 +87,22 @@ const PrescriptionList = () => {
           {
             header: "Detalhes",
             body: (pregnancy) => {
-              console.log(pregnancy)
-              return `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lmp}) e ${pregnancy?.gestacionalAgeFirstUs} pela USG de ${pregnancy?.ultrasonographies[0]?.age}`
-            }
+              return `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lastMenstrualPeriod}) e ${pregnancy?.gestacionalAgeFirstUs} pela USG de ${pregnancy?.ultrasonographies[0]?.age}`;
+            },
           },
           {
             header: "Observações",
             field: "observations",
-          },
+          }
         ]}
         rowClassName={(data) => {
           return {
             "bg-high-risk": data?.risk?.name === "alto",
-          }
+          };
         }}
       >
         <form onSubmit={formik.handleSubmit}>
+          <input type="text" name="id" value={formik.values.id} onChange={formik.handleChange}/>
           <Input label="Nome da Paciente" name="patientName" formik={formik} />
           <Input
             type="date"
@@ -162,6 +164,9 @@ const PrescriptionList = () => {
           <Button loading={pregnancyLoading}>Enviar</Button>
         </form>
       </DataTable>
+      <pre>
+        <code>{JSON.stringify(formik.values, null, 2)}</code>
+      </pre>
     </LYTSimplePage>
   );
 };

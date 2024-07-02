@@ -1,14 +1,18 @@
 import { StyledDataTable } from "./styles";
 import { FilterMatchMode } from "primereact/api";
 import useDataTableHeader from "services/hooks/useDataTableHeader";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Column } from "primereact/column";
+import { PropTypes } from "prop-types";
 
 const InternalDataTable = ({
   children,
   columns,
   loading,
   handleInsertModel,
+  canUpdate,
+  searchPlaceholder,
+  formik,
   ...props
 }) => {
   const [filters, setFilters] = useState({
@@ -28,37 +32,22 @@ const InternalDataTable = ({
     setGlobalFilterValue(value);
   };
 
-  const handleUpdateModelItem = (id, name, value) => {};
-
   const header = useDataTableHeader({
     globalFilterValue,
     onGlobalFilterChange,
-    handleInsertModelBtn: () => setShowInsertForm(true),
+    handleInsertModelBtn: () => {
+      setShowInsertForm(true);
+      if (formik) formik.setFieldValue("id", null, true);
+    },
+    searchPlaceholder,
   });
-
-  const textEditor = (options) => {
-    return (
-      <input
-        type="text"
-        value={options.value}
-        onChange={(e) => options.editorCallback(e.target.value)}
-        onKeyDown={(e) => e.stopPropagation()}
-      />
-    );
-  };
-
-  const onCellEditComplete = (e) => {
-    console.log(e);
-    const { rowData, newValue, field } = e;
-    console.log(`Editando ${rowData.id} - ${field} para ${newValue}`);
-  };
 
   return showInsertForm && children ? (
     [
-      children,
       <button key={2} onClick={() => setShowInsertForm(false)}>
-        Voltar
+        ← Voltar
       </button>,
+      children,
     ]
   ) : (
     <StyledDataTable
@@ -85,13 +74,33 @@ const InternalDataTable = ({
             field={column.field}
             body={column.body}
             header={column.header}
-            editor={(options) => textEditor(options)}
-            onCellEditComplete={onCellEditComplete}
           ></Column>
         );
       })}
+      {canUpdate && <Column header="Edit" body={rowData => <button onClick={() => {
+        setShowInsertForm(true)
+        console.log("edit", rowData)
+        if(formik)
+          formik.setFieldValue("id", rowData.id, true)
+      }}>
+                📝
+              </button>}></Column>}
     </StyledDataTable>
   );
+};
+
+InternalDataTable.propTypes = {
+  children: PropTypes.node,
+  columns: PropTypes.array,
+  loading: PropTypes.bool,
+  handleInsertModel: PropTypes.func,
+  searchPlaceholder: PropTypes.string,
+  formik: PropTypes.object,
+  canUpdate: PropTypes.bool,
+};
+
+InternalDataTable.defaultProps = {
+  searchPlaceholder: "Digite para Pesquisar",
 };
 
 export default InternalDataTable;

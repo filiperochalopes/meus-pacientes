@@ -65,38 +65,40 @@ export const GET_PRESCRIPTION_LIST = gql`
 `;
 
 export const PREGNANTS = gql`
-query Pregnants{
-  pregnants{
-    patient{
-      name
-      dob
-      age
-      communityHealthAgent{
+  query Pregnants {
+    pregnants {
+      patient {
         name
+        dob
+        age
+        communityHealthAgent {
+          name
+        }
       }
-    }
-    risk {
-      name
-      description
-    }
-    ultrasonographies{
-      date
-      gestationalAgeDays
-      gestationalAgeWeeks
-      formatedGestationalAge
-    }
-    labTests{
-      labTest{
+      risk {
         name
+        description
       }
-      value
+      ultrasonographies {
+        date
+        gestationalAgeDays
+        gestationalAgeWeeks
+        formatedGestationalAge
+      }
+      labTests {
+        labTest {
+          name
+        }
+        value
+      }
+      id
+      lastMenstrualPeriod
+      gestationalAgeLmp
+      parity
+      dayOfBirth
+      observations
     }
-    lastMenstrualPeriod
-    parity
-    dayOfBirth
-    observations
   }
-}
 `;
 
 export const CID10 = gql`

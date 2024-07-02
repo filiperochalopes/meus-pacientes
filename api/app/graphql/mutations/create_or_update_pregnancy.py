@@ -1,7 +1,7 @@
 from ariadne import convert_kwargs_to_snake_case
 from app.models import db, Patient, Pregnancy, Ultrasonography, RiskLevel
 from app.graphql import mutation
-from sqlalchemy import or_
+from sqlalchemy import or_, and_
 import datetime
 
 
@@ -28,6 +28,7 @@ def create_or_update_pregnancy(_, info, item: dict):
 
     if "id" in item:
         id = item["id"]
+        print(f"Gestação encontrada, id: {id}")
         # Atualiza os dados da gestação
         pregnancy = db.session.query(Pregnancy).get(id)
         db.session.query(Patient).filter_by(id=pregnancy.patient_id).update(
@@ -67,19 +68,22 @@ def create_or_update_pregnancy(_, info, item: dict):
         db.session.query(Pregnancy).filter_by(id=id).update(item)
         db.session.commit()
     else:
+        print("Gestação não encontrada, criando uma...")
         # Verifica se os dados do paciente já existe no banco de dados algum outro com CNS, CPF ou ID semelhante
         patient = (
             db.session.query(Patient)
             .filter(
                 or_(
-                    Patient.cns == patient_dict.get("cns"),
-                    Patient.cpf == patient_dict.get("cpf"),
+                    and_(Patient.cns == patient_dict.get("cns"), patient_dict.get("cns") is not None),
+                    and_(Patient.cpf == patient_dict.get("cpf"), patient_dict.get("cpf") is not None),
+                    and_(Patient.name == patient_dict.get("name"), Patient.dob == patient_dict.get("dob")),
                     Patient.id == patient_dict.get("id"),
                 )
             )
             .first()
         )
         if not patient:
+            print("Paciente não encontrado, criando um novo...")
             # Cria paciente caso não exista
             # FIXME: Após implementação de login, capturar a instituição de quem está logado
             patient_dict["institution_id"] = 1
@@ -93,16 +97,18 @@ def create_or_update_pregnancy(_, info, item: dict):
         pregnancy_first_usg_day = item.pop("pregnancy_first_usg_day", None)
         pregnancy_first_usg_date = item.pop("pregnancy_first_usg_date", None)
         pregnancy = Pregnancy(**item)
+        db.session.add(pregnancy)
         db.session.flush()
-        if item.get("pregnancy_first_usg_date"):
+        if pregnancy_first_usg_date:
+            print("Cadastrando uma ultrassonografia...")
             ultrasonography = Ultrasonography(
                 gestational_age_weeks=pregnancy_first_usg_week,
                 gestational_age_days=pregnancy_first_usg_day,
                 date=datetime.date.fromisoformat(pregnancy_first_usg_date),
                 pregnancy_id=pregnancy.id,
             )
+            db.session.add(ultrasonography)
 
-        db.session.add(pregnancy)
         db.session.commit()
 
     return pregnancy
