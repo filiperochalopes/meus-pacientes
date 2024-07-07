@@ -1,7 +1,7 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 // README at: https://github.com/devcontainers/templates/tree/main/src/postgres
 {
-    "name": "Python 3 & PostgreSQL",
+    "name": "Python 3 & NodeJs",
     "dockerComposeFile": "docker-compose.yml",
     "service": "app",
     "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
@@ -16,7 +16,7 @@
   
     // Use 'forwardPorts' to make a list of ports inside the container available locally.
     // This can be used to "network with other containers or the host.
-    "forwardPorts": [5000, 5432, 3000, 80],
+    "forwardPorts": [5000, 3000, 80],
   
     // Use 'postCreateCommand' to run commands after the container is created.
     "postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",

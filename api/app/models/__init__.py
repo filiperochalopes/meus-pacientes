@@ -236,7 +236,7 @@ class Pregnancy(BaseModel):
     observations = db.Column(db.String)
     risk_id = db.Column(db.Integer, ForeignKey("risk_levels.id"))
     risk = relationship("RiskLevel", uselist=False)
-    day_of_birth = db.Column(db.Date, nullable=True)
+    date_of_birth = db.Column(db.Date, nullable=True)
 
 
 class LabTest(BaseModel):

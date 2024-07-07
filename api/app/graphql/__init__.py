@@ -18,6 +18,8 @@ type_defs = gql(
        getLabTestArrival(cpf: String): [LabTestArrival]
        "Retorna as pacientes grávidas"
        pregnants: [Pregnancy]
+       "Retorna gravidez selecionada"
+       pregnancy(id:Int!): Pregnancy
        "Retorna os Agentes de Saúde"
        communityHealthAgents: [User]
     }
@@ -259,7 +261,8 @@ type_defs = gql(
         lastMenstrualPeriod: String
         parity: String
         gestationalAgeLmp: String
-        gestacionalAgeFirstUsg: String
+        gestationalAgeFirstUsg: String
+        formatedGestationalAge: String
         ultrasonographies: [Ultrasonography]
         labTests: [PregnancyLabTest]
         observations: String

@@ -1,26 +1,27 @@
 import LYTSimplePage from "components/LYT_SimplePage";
 import { useEffect, useState } from "react";
-import {
-  COMMUNITY_HEALTH_AGENTS,
-  GET_PRESCRIPTION_LIST,
-  PREGNANTS,
-} from "graphql/queries";
+import { COMMUNITY_HEALTH_AGENTS, PREGNANTS, PREGNANCY } from "graphql/queries";
 import { CREATE_OR_UPDATE_PREGNANCY } from "graphql/mutations";
-import { useMutation, useQuery } from "@apollo/client";
+import { useMutation, useQuery, useLazyQuery } from "@apollo/client";
 import DataTable from "components/DataTable";
 import Input from "components/Input";
 import Button from "components/Button";
 import { useFormik } from "formik";
 import Select from "components/Select";
+import { useRef } from "react";
 
 // the function component to display a DataTable from primereact
 const PrescriptionList = () => {
   const [pregnants, setPregnants] = useState([]),
-    { data, loading } = useQuery(PREGNANTS),
+    [getPregnants, {data, loading} ] = useLazyQuery(PREGNANTS, {
+      fetchPolicy: "network-only"
+    }),
     { data: communityHealthAgentsData } = useQuery(COMMUNITY_HEALTH_AGENTS),
-    [createOrUpdatePregnancy, { loading: pregnancyLoading }] = useMutation(
+    [getPregnancyData, { data: pregnancyData }] = useLazyQuery(PREGNANCY),
+    [createOrUpdatePregnancy, { loading: pregnancyLoading, data: createPregnancyData }] = useMutation(
       CREATE_OR_UPDATE_PREGNANCY
     ),
+    datatableRef = useRef(),
     formik = useFormik({
       initialValues: {
         patientName: "",
@@ -55,15 +56,63 @@ const PrescriptionList = () => {
     });
 
   useEffect(() => {
+    getPregnants();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (data) {
       setPregnants(data.pregnants);
-      console.log(data.pregnants);
     }
   }, [data]);
+
+  useEffect(() => {
+    if (createPregnancyData) {
+      formik.resetForm();
+      if (datatableRef.current) {
+        datatableRef.current.setShowInsertForm(false);
+        getPregnants();
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [createPregnancyData]);
+
+  useEffect(() => {
+    if (formik.values.id) {
+      // captura a gravidez pelo id
+      getPregnancyData({
+        variables: {
+          id: parseInt(formik.values.id),
+        },
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [formik.values.id]);
+
+  useEffect(() => {
+    if (pregnancyData) {
+      const { pregnancy: p } = pregnancyData;
+      console.log(p);
+      formik.setValues({
+        patientDob: p.patient.dob,
+        patientName: p.patient.name,
+        patientTacs: p.patient.communityHealthAgent.id,
+        pregnancyFirstUsgDate: p.ultrasonographies[0]?.date,
+        pregnancyFirstUsgDay: p.ultrasonographies[0]?.gestationalAgeDays,
+        pregnancyFirstUsgWeek: p.ultrasonographies[0]?.gestationalAgeWeeks,
+        pregnancyLmp: p.lastMenstrualPeriod,
+        pregnancyObservations: p.observations,
+        pregnancyParity: p.parity,
+        pregnancyRisk: p.risk.name,
+      }, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pregnancyData]);
 
   return (
     <LYTSimplePage title="Lista de Gestantes">
       <DataTable
+        ref={datatableRef}
         globalFilterFields={["patient.name"]}
         loading={loading}
         value={pregnants}
@@ -93,7 +142,7 @@ const PrescriptionList = () => {
           {
             header: "Observações",
             field: "observations",
-          }
+          },
         ]}
         rowClassName={(data) => {
           return {
@@ -102,7 +151,12 @@ const PrescriptionList = () => {
         }}
       >
         <form onSubmit={formik.handleSubmit}>
-          <input type="text" name="id" value={formik.values.id} onChange={formik.handleChange}/>
+          <input
+            type="hidden"
+            name="id"
+            value={formik.values.id}
+            onChange={formik.handleChange}
+          />
           <Input label="Nome da Paciente" name="patientName" formik={formik} />
           <Input
             type="date"
@@ -159,6 +213,12 @@ const PrescriptionList = () => {
             type="textarea"
             label="Observações"
             name="pregnancyObservations"
+            formik={formik}
+          />
+          <Input
+            type="date"
+            name="pregnancyDateOfBirth"
+            label="Data de Nascimento"
             formik={formik}
           />
           <Button loading={pregnancyLoading}>Enviar</Button>

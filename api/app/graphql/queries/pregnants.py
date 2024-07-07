@@ -10,13 +10,13 @@ from pprint import pprint as pp
 @query.field("pregnants")
 @convert_kwargs_to_snake_case
 def get_pregnants(*_):
-    result = db.session.query(Pregnancy).all()
-
+    result = db.session.query(Pregnancy).filter(Pregnancy.date_of_birth == None).all()
     for p in result:
         r = requests.post(
             "https://calc.filipelopes.med.br/api/v1/marcos-gravidez",
             json={
                 "dum": date.strftime(p.last_menstrual_period, "%Y-%m-%d")
+
             },
         )
         pp(r.json())
@@ -27,3 +27,11 @@ def get_pregnants(*_):
 
     schema = PregnancySchema(many=True)
     return schema.dump(result)
+
+
+@query.field("pregnancy")
+@convert_kwargs_to_snake_case
+def get_pregnancy_by_id(*_, id:int):
+    p = db.session.query(Pregnancy).get(id)
+    schema = PregnancySchema()
+    return schema.dump(p)

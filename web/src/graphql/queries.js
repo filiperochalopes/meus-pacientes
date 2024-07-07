@@ -85,6 +85,38 @@ export const PREGNANTS = gql`
         gestationalAgeWeeks
         formatedGestationalAge
       }
+      id
+      lastMenstrualPeriod
+      gestationalAgeLmp
+      parity
+      dayOfBirth
+      observations
+    }
+  }
+`;
+
+export const PREGNANCY = gql`
+  query Pregnancy($id: Int!) {
+    pregnancy(id: $id) {
+      patient {
+        name
+        dob
+        age
+        communityHealthAgent {
+          id
+          name
+        }
+      }
+      risk {
+        name
+        description
+      }
+      ultrasonographies {
+        date
+        gestationalAgeDays
+        gestationalAgeWeeks
+        formatedGestationalAge
+      }
       labTests {
         labTest {
           name
@@ -94,6 +126,8 @@ export const PREGNANTS = gql`
       id
       lastMenstrualPeriod
       gestationalAgeLmp
+      gestationalAgeFirstUsg
+      formatedGestationalAge
       parity
       dayOfBirth
       observations
