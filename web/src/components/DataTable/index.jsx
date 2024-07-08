@@ -6,6 +6,7 @@ import { Column } from "primereact/column";
 import { PropTypes } from "prop-types";
 import { forwardRef } from "react";
 import { useImperativeHandle } from "react";
+import { Dialog } from "primereact/dialog";
 
 const InternalDataTable = forwardRef(
   (
@@ -26,7 +27,9 @@ const InternalDataTable = forwardRef(
         global: { value: null, matchMode: FilterMatchMode.CONTAINS },
       }),
       [globalFilterValue, setGlobalFilterValue] = useState(""),
-      [showInsertForm, setShowInsertForm] = useState(false);
+      [showInsertForm, setShowInsertForm] = useState(false),
+      [showDetails, setShowDetails] = useState(false),
+      [details, setDetails] = useState("");
 
     // Updates the global filter value and triggers a filter update.
     const onGlobalFilterChange = (e) => {
@@ -53,72 +56,86 @@ const InternalDataTable = forwardRef(
       searchPlaceholder,
     });
 
-    return showInsertForm && children ? (
-      [
-        <button key={2} onClick={() => setShowInsertForm(false)}>
-          ← Voltar
-        </button>,
-        children,
-      ]
-    ) : (
-      <StyledDataTable
-        size="small"
-        paginator
-        rows={20}
-        rowsPerPageOptions={[20, 40, 80, 160]}
-        sortMode="multiple"
-        removableSort
-        editMode="cell"
-        scrollable
-        header={header}
-        loading={loading}
-        filters={filters}
-        onFilter={onGlobalFilterChange}
-        emptyMessage="Sem informações."
-        {...props}
-        rowClassName={(rowData) => props.rowClassName(rowData)}
-      >
-        {columns.map((column) => {
-          return (
-            <Column
-              key={column.field}
-              field={column.field}
-              body={column.body}
-              header={column.header}
-            ></Column>
-          );
-        })}
-        {canUpdate && (
-          <Column
-            header="Edit"
-            body={(rowData) => (
-              <button
-                onClick={() => {
-                  setShowInsertForm(true);
-                  if (formik) formik.setFieldValue("id", rowData.id, true);
-                }}
-              >
-                📝
-              </button>
+    return showInsertForm && children
+      ? [
+          <button key={2} onClick={() => setShowInsertForm(false)}>
+            ← Voltar
+          </button>,
+          children,
+        ]
+      : [
+          <StyledDataTable
+            size="small"
+            key="prime-react-datatable"
+            paginator
+            rows={20}
+            rowsPerPageOptions={[20, 40, 80, 160]}
+            sortMode="multiple"
+            removableSort
+            editMode="cell"
+            scrollable
+            header={header}
+            loading={loading}
+            filters={filters}
+            onFilter={onGlobalFilterChange}
+            emptyMessage="Sem informações."
+            {...props}
+            rowClassName={(rowData) => props.rowClassName(rowData)}
+          >
+            {columns.map((column) => {
+              return (
+                <Column
+                  key={column.field}
+                  field={column.field}
+                  body={column.body}
+                  header={column.header}
+                ></Column>
+              );
+            })}
+            {canUpdate && (
+              <Column
+                header="Edit"
+                body={(rowData) => (
+                  <button
+                    onClick={() => {
+                      setShowInsertForm(true);
+                      if (formik)
+                        formik.setFieldValue("id", parseInt(rowData.id), true);
+                    }}
+                  >
+                    📝
+                  </button>
+                )}
+              ></Column>
             )}
-          ></Column>
-        )}
-        {showMoreDetails && (
-          <Column
-            header="Details"
-            body={(rowData) => (
-              <button
-                onClick={() => {
-                  showMoreDetails(rowData);
-                }}
-              >
-                🔎
-              </button>
+            {showMoreDetails && (
+              <Column
+                header="Details"
+                body={(rowData) => (
+                  <button
+                    onClick={() => {
+                      setShowDetails(true);
+                      showMoreDetails(rowData, setDetails);
+                    }}
+                  >
+                    🔎
+                  </button>
+                )}
+              ></Column>
             )}
-          ></Column>
-        )}
-      </StyledDataTable>
-    );
+          </StyledDataTable>,
+          <Dialog
+            header="Cabeçalho"
+            visible={showDetails}
+            style={{ width: "50vw" }}
+            onHide={() => {
+              if (!showDetails) return;
+              setShowDetails(false);
+            }}
+          >
+            {details}
+          </Dialog>,
+        ];
   }
 );
 

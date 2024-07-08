@@ -1,5 +1,6 @@
 import Routes from "./services/Routes";
 import GlobalStyles, { theme } from "./styles";
+import "primereact/resources/themes/md-light-indigo/theme.css";
 
 import React from "react";
 import { ThemeProvider } from "styled-components";

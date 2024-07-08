@@ -5,7 +5,6 @@ import React, {
   useState,
   useRef,
 } from "react";
-import jwt_decode from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import apolloClient from "services/apiClient";
 import { ME } from "graphql/queries";
@@ -28,33 +27,38 @@ const ContextProvider = ({ children }) => {
     toast.current.show({ severity, summary, detail });
   };
 
+  const getUser = () => {
+    // Captura dados do usuário para utilizar
+    apolloClient
+      .query({
+        query: ME,
+      })
+      .then(({ data: { me } }) => {
+        setUser(me);
+      })
+      .catch((error) => {
+        setUser(null);
+        toastMessage({
+          severity: "error",
+          summary: "Erro de Autenticação",
+          detail: error.message,
+        });
+      })
+      .finally(() => {
+        setUserIsLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
+
   useEffect(() => {
     // Caso exista token, verifica sua validação
     if (token) {
       // Cadastra o token em local Storage
       localStorage.setItem("meuspacientes:token", token);
-      // Captura dados do usuário para utilizar
-      apolloClient
-        .query({
-          query: ME,
-        })
-        .then(({ data: { me } }) => {
-          setUser(me);
-        })
-        .catch((error) => {
-          setUser(null);
-          toastMessage({
-            severity: "error",
-            summary: "Erro de Autenticação",
-            detail: error.message,
-          });
-        })
-        .finally(() => {
-          setUserIsLoading(false);
-        });
-    } else {
-      setUser(null);
-      localStorage.removeItem("meuspacientes:token");
+      getUser();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);

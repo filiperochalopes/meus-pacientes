@@ -18,7 +18,7 @@ import SidePageLayout from "components/LYT_SidePage";
 function Login() {
   const navigate = useNavigate(),
     [signing, { data, loading, error }] = useMutation(SIGNIN),
-    { setUser } = useAppContext(),
+    { setToken } = useAppContext(),
     { handleErrors } = useHandleErrors();
 
   const formik = useFormik({
@@ -42,9 +42,7 @@ function Login() {
   useEffect(() => {
     if (data) {
       // Salva token em localstorage
-      console.log(data.signin);
-      localStorage.setItem("meuspacientes:token", data.signin.token);
-      setUser(data.signin);
+      setToken(data.signin.token);
       navigate("/");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

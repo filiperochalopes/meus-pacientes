@@ -16,7 +16,12 @@ def get_pregnants(*_):
             "https://calc.filipelopes.med.br/api/v1/marcos-gravidez",
             json={
                 "dum": date.strftime(p.last_menstrual_period, "%Y-%m-%d")
-
+                # "data_exame": "2024-07-08",
+                # "ig_exame": {
+                #     "semana": 0,
+                #     "dia": 0
+                # },
+                # "data_ultima_consulta": "2024-06-29"
             },
         )
         pp(r.json())

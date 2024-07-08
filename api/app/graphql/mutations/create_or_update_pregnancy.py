@@ -34,11 +34,12 @@ def create_or_update_pregnancy(_, info, item: dict):
         db.session.query(Patient).filter_by(id=pregnancy.patient_id).update(
             patient_dict
         )
-        first_ultrasonography = sorted(
-            [u for u in pregnancy.ultrasonographies], key=lambda x: x.date
-        )[0]
-        print(first_ultrasonography)
-        if first_ultrasonography:
+        if len(pregnancy.ultrasonographies) > 0:
+            # Atualiza usg existente
+            first_ultrasonography = sorted(
+                [u for u in pregnancy.ultrasonographies], key=lambda x: x.date
+            )[0]
+            print(first_ultrasonography)
             if item.get("pregnancy_first_usg_date"):
                 first_ultrasonography.date = datetime.date.fromisoformat(
                     item.get("pregnancy_first_usg_date")
@@ -51,7 +52,8 @@ def create_or_update_pregnancy(_, info, item: dict):
                 first_ultrasonography.gestational_age_weeks = item.get(
                     "pregnancy_first_usg_week"
                 )
-        else:
+        elif item.get("pregnancy_first_usg_date") and item.get("pregnancy_first_usg_day") and item.get("pregnancy_first_usg_week"):
+            # Cria ultrassonografia, caso ela tenha preenchido
             if item.get("pregnancy_first_usg_date"):
                 ultrasonography = Ultrasonography(
                     gestational_age_weeks=item.get("pregnancy_first_usg_week"),
