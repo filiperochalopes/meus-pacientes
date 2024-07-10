@@ -10,7 +10,11 @@ const MainHeader = ({ showMenu, onMenuClick }) => {
   return (
     <Header>
       {user?.id && <button onClick={onMenuClick}>Menu</button>}{" "}
-      {!user?.id && <Link to="/login">Login</Link>}{" "}
+      {!user?.id && (
+        <Link to="/login">
+          <button>Entrar</button>
+        </Link>
+      )}{" "}
       {user?.institutionRoles[0]?.institution.name} • Meus Pacientes{" "}
       {user?.id && <button onClick={logout}>Sair</button>}
     </Header>

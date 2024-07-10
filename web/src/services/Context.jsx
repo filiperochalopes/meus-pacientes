@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import apolloClient from "services/apiClient";
 import { ME } from "graphql/queries";
 import { Toast } from "primereact/toast";
+import { useCallback } from "react";
 
 const Context = createContext({});
 
@@ -27,7 +28,7 @@ const ContextProvider = ({ children }) => {
     toast.current.show({ severity, summary, detail });
   };
 
-  const getUser = () => {
+  const getUser = useCallback(() => {
     // Captura dados do usuário para utilizar
     apolloClient
       .query({
@@ -47,15 +48,16 @@ const ContextProvider = ({ children }) => {
       .finally(() => {
         setUserIsLoading(false);
       });
-  };
+  }, []);
 
   useEffect(() => {
     getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     // Caso exista token, verifica sua validação
-    if (token) {
+    if (token && !user?.id) {
       // Cadastra o token em local Storage
       localStorage.setItem("meuspacientes:token", token);
       getUser();

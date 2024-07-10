@@ -49,10 +49,10 @@ const Home = () => {
           </li>
         </ul>
         <center>
-          <br/>
+          <br />
           <Link to="/login">Entrar no sistema</Link>
-          <br/>
-          <br/>
+          <br />
+          <br />
         </center>
         <section>
           <p>

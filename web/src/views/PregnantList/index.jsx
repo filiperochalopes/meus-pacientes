@@ -143,10 +143,20 @@ const PrescriptionList = () => {
           canUpdate
           formik={formik}
           showMoreDetails={(pregnancy, setContentCallback) => {
-            setContentCallback(<section>
-              {pregnancy?.gestationalAgeLmp} pela DUM ({pregnancy?.lastMenstrualPeriod}) e {pregnancy?.gestationalAgeFirstUsg} pela USG de {pregnancy?.ultrasonographies[0]?.age}
-              <textarea>Gestante, {pregnancy?.patient?.age}, {pregnancy?.parity} IG {pregnancy?.gestationalAge}. Nega cólicas, corrimentos, sangramentos, disúria e outras queixas não descritas. Relata uso do sultato ferroso e ácido fólico.</textarea>
-            </section>);
+            setContentCallback(
+              <section>
+                {pregnancy?.gestationalAgeLmp} pela DUM (
+                {pregnancy?.lastMenstrualPeriod}) e{" "}
+                {pregnancy?.gestationalAgeFirstUsg} pela USG de{" "}
+                {pregnancy?.ultrasonographies[0]?.age}
+                <textarea>
+                  Gestante, {pregnancy?.patient?.age}, {pregnancy?.parity} IG{" "}
+                  {pregnancy?.gestationalAge}. Nega cólicas, corrimentos,
+                  sangramentos, disúria e outras queixas não descritas. Relata
+                  uso do sultato ferroso e ácido fólico.
+                </textarea>
+              </section>
+            );
           }}
           columns={[
             {
@@ -169,7 +179,7 @@ const PrescriptionList = () => {
             },
             {
               header: "DPP",
-              field: "dueDate"
+              field: "dueDate",
             },
             {
               header: "Observações",
