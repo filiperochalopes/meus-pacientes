@@ -87,9 +87,10 @@ export const PREGNANTS = gql`
       }
       id
       lastMenstrualPeriod
-      gestationalAgeLmp
+      gestationalAge
+      dueDate
       parity
-      dayOfBirth
+      dateOfBirth
       observations
     }
   }
@@ -127,9 +128,9 @@ export const PREGNANCY = gql`
       lastMenstrualPeriod
       gestationalAgeLmp
       gestationalAgeFirstUsg
-      formatedGestationalAge
+      dueDate
       parity
-      dayOfBirth
+      dateOfBirth
       observations
     }
   }

@@ -1,6 +1,7 @@
 import React from "react";
 import Container from "./styles";
 import SimplePageLayout from "components/LYT_SimplePage";
+import { Link } from "react-router-dom";
 
 const Home = () => {
   return (
@@ -47,6 +48,12 @@ const Home = () => {
             conseguir uma prescrição sem passar por uma consulta necessária.
           </li>
         </ul>
+        <center>
+          <br/>
+          <Link to="/login">Entrar no sistema</Link>
+          <br/>
+          <br/>
+        </center>
         <section>
           <p>
             Para fazer uma lista para sua instituição{" "}

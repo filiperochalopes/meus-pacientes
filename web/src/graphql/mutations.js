@@ -64,6 +64,7 @@ export const CREATE_OR_UPDATE_PREGNANCY = gql`
     $observations: String
     $risk: RiskEnum
     $communityHealthAgentId: Int
+    $dateOfBirth: String
   ) {
     createOrUpdatePregnancy(
       item: {
@@ -80,6 +81,7 @@ export const CREATE_OR_UPDATE_PREGNANCY = gql`
         pregnancyFirstUsgWeek: $pregnancyFirstUsgWeek
         observations: $observations
         risk: $risk
+        dateOfBirth: $dateOfBirth
       }
     ) {
       id

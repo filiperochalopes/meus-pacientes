@@ -141,6 +141,8 @@ type_defs = gql(
         observations: String
         "Risco da gestação"
         risk: RiskEnum
+        "Data do parto"
+        dateOfBirth: String
     }
 
     input PatientInput {
@@ -260,14 +262,15 @@ type_defs = gql(
         patient: Patient
         lastMenstrualPeriod: String
         parity: String
+        gestationalAge: String
         gestationalAgeLmp: String
         gestationalAgeFirstUsg: String
-        formatedGestationalAge: String
         ultrasonographies: [Ultrasonography]
         labTests: [PregnancyLabTest]
         observations: String
-        dayOfBirth: String
+        dateOfBirth: String
         risk: RiskLevel
+        dueDate: String
     }
 
     type RiskLevel {

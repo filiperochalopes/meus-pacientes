@@ -26,7 +26,13 @@ def create_or_update_pregnancy(_, info, item: dict):
     )
     item.pop("risk", None)
 
-    if "id" in item:
+    if "date_of_birth" in item:
+        # Converte para o formato aceitável no sqlite
+        item["date_of_birth"] = datetime.date.fromisoformat(
+            item["date_of_birth"]
+        )
+
+    if "id" in item and item["id"]:
         id = item["id"]
         print(f"Gestação encontrada, id: {id}")
         # Atualiza os dados da gestação

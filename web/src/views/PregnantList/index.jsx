@@ -45,6 +45,7 @@ const PrescriptionList = () => {
         pregnancyObservations: observations,
         pregnancyParity: parity,
         pregnancyRisk: risk,
+        pregnancyDateOfBirth: dateOfBirth,
         id,
       }) => {
         createOrUpdatePregnancy({
@@ -59,6 +60,7 @@ const PrescriptionList = () => {
             pregnancyFirstUsgWeek,
             observations,
             risk,
+            dateOfBirth,
             communityHealthAgentId: Number(communityHealthAgentId),
           },
         });
@@ -120,6 +122,7 @@ const PrescriptionList = () => {
           pregnancyObservations: p.observations,
           pregnancyParity: p.parity,
           pregnancyRisk: riskMap[p.risk.name],
+          pregnancyDateOfBirth: p.dateOfBirth,
         },
         true
       );
@@ -140,7 +143,10 @@ const PrescriptionList = () => {
           canUpdate
           formik={formik}
           showMoreDetails={(pregnancy, setContentCallback) => {
-            setContentCallback(<p>Teste de Conteúdo</p>);
+            setContentCallback(<section>
+              {pregnancy?.gestationalAgeLmp} pela DUM ({pregnancy?.lastMenstrualPeriod}) e {pregnancy?.gestationalAgeFirstUsg} pela USG de {pregnancy?.ultrasonographies[0]?.age}
+              <textarea>Gestante, {pregnancy?.patient?.age}, {pregnancy?.parity} IG {pregnancy?.gestationalAge}. Nega cólicas, corrimentos, sangramentos, disúria e outras queixas não descritas. Relata uso do sultato ferroso e ácido fólico.</textarea>
+            </section>);
           }}
           columns={[
             {
@@ -158,8 +164,12 @@ const PrescriptionList = () => {
             {
               header: "Detalhes",
               body: (pregnancy) => {
-                return `${pregnancy?.parity} ${pregnancy?.gestationalAgeLmp} pela DUM (${pregnancy?.lastMenstrualPeriod}) e ${pregnancy?.gestationalAgeFirstUsg} pela USG de ${pregnancy?.ultrasonographies[0]?.age}`;
+                return `${pregnancy?.parity} ${pregnancy?.gestationalAge}`;
               },
+            },
+            {
+              header: "DPP",
+              field: "dueDate"
             },
             {
               header: "Observações",

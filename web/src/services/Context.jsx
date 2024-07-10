@@ -66,7 +66,7 @@ const ContextProvider = ({ children }) => {
   function logout() {
     localStorage.removeItem("meuspacientes:token");
     setUser(undefined);
-    navigate("/", { replace: true });
+    // navigate("/", { replace: true });
   }
 
   return (

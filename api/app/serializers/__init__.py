@@ -95,6 +95,8 @@ class PatientSchema(CamelCaseSchema):
 class UltrasonographySchema(CamelCaseSchema):
     class Meta:
         model = Ultrasonography
+    
+    formated_gestational_age = fields.Str(dump_only=True)
 
 
 class LabTestSchema(CamelCaseSchema):
@@ -119,7 +121,10 @@ class PregnancySchema(CamelCaseSchema):
     ultrasonographies = fields.List(sqa_fields.Nested(UltrasonographySchema))
     lab_tests = fields.List(sqa_fields.Nested(PregnancyLabTestSchema))
     risk = sqa_fields.Nested(RiskLevelSchema)
+    due_date = fields.Str(dump_only=True)
+    gestational_age = fields.Str(dump_only=True)
     gestational_age_lmp = fields.Str(dump_only=True)
+    gestational_age_first_usg = fields.Str(dump_only=True)
 
 
 class ContinuousPrescriptionSchema(CamelCaseSchema):

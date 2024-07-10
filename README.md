@@ -11,6 +11,7 @@ cd api
 rm -rf instance
 flask db upgrade
 flask seed
+python shell.py create-institution
 ```
 
 Lint python
