@@ -26,7 +26,7 @@ def create_or_update_pregnancy(_, info, item: dict):
     )
     item.pop("risk", None)
 
-    if "date_of_birth" in item:
+    if "date_of_birth" in item and item["date_of_birth"]:
         # Converte para o formato aceitável no sqlite
         item["date_of_birth"] = datetime.date.fromisoformat(
             item["date_of_birth"]

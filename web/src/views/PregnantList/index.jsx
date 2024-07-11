@@ -269,15 +269,15 @@ const PrescriptionList = () => {
             <Input
               type="date"
               name="pregnancyDateOfBirth"
-              label="Data de Nascimento"
+              label="Data do Desfecho"
               formik={formik}
             />
             <Button loading={pregnancyLoading}>Enviar</Button>
           </form>
         </DataTable>
-        <pre>
+        {/* <pre>
           <code>{JSON.stringify(formik.values, null, 2)}</code>
-        </pre>
+        </pre> */}
       </LYTSimplePage>
     </PrivatePage>
   );
