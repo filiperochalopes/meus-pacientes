@@ -73,9 +73,7 @@ def create_tacs():
         user_name = typer.prompt("Nome do usuário (TACS)")
         print("Lista de instituições cadastradas: ")
         institutions = db.session.query(Institution).all()
-        institution_input_list = {}
         for institution in institutions:
-            institution_input_list[institution.id] = institution.name
             print(f"{institution.id} - {institution.name} ({institution.cnes})")
         institution_id = typer.prompt("Digite o número referente a instituição")
 
@@ -102,9 +100,7 @@ def create_tacs_bulk():
     with app.app_context():
         print("Lista de instituições cadastradas: ")
         institutions = db.session.query(Institution).all()
-        institution_input_list = {}
         for institution in institutions:
-            institution_input_list[institution.id] = institution.name
             print(f"{institution.id} - {institution.name} ({institution.cnes})")
         institution_id = typer.prompt("Digite o número referente a instituição")
 
@@ -159,6 +155,52 @@ def create_tacs_bulk():
             db.session.add(user_institution_role)
         db.session.commit()
 
+@shell.command()
+def create_user():
+    from app.models import db, User, Role, UserInstitutionRole, Institution
+
+    with app.app_context():
+        # Seleciona instituição
+        institutions = db.session.query(Institution).all()
+        for institution in institutions:
+            print(f"{institution.id} - {institution.name} ({institution.cnes})")
+        institution_id = typer.prompt(
+            "Digite o número referente a instituição", type=int
+        )
+
+        # Seleciona e cria um papel
+        print("Papeis disponíveis: ")
+        roles = db.session.query(Role).all()
+        for role in roles:
+            print(f"{role.id} - {role.name}")
+        role_id = typer.prompt("Digite o número referente ao papel")
+
+        # Cria o usuário
+        user_name = typer.prompt("Nome do usuário")
+        user_email = typer.prompt("Email do usuário")
+        user_phone = typer.prompt("Telefone do usuário")
+        user_cpf = typer.prompt("CPF do usuário")
+        user_dob = datetime.date.fromisoformat(typer.prompt("Data de nascimento do usuário"))
+        user = User(
+            name=user_name,
+            email=user_email,
+            cpf=user_cpf,
+            phone=user_phone,
+            dob=user_dob,
+        )
+        user.password_hash = User.generate_password("senha@123")
+        db.session.add(user)
+        db.session.flush()
+
+        # Cria o papel do usuário
+        user_institution_role = UserInstitutionRole(
+            user_id=user.id,
+            institution_id=institution_id,
+            role_id=role_id,
+        )
+        db.session.add(user_institution_role)
+        db.session.commit()
+        print("Usário adicionado!")
 
 if __name__ == "__main__":
     shell()
