@@ -7,7 +7,7 @@ const PrvatePage = ({ children }) => {
 
   console.log(user, userIsLoading);
 
-  if (!user?.id && !userIsLoading) return <Navigate to="/" replace />;
+  // if (!user?.id && !userIsLoading) return <Navigate to="/" replace />;
   return <section>{children}</section>;
 };
 

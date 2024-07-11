@@ -8,6 +8,7 @@ import LabTestEditForm from "views/LabTestEditForm";
 import LabTestCheck from "views/LabTestCheck";
 import PregnantList from "views/PregnantList";
 import ContextProvider from "services/Context";
+
 const RouteList = () => {
   return (
     <Router>

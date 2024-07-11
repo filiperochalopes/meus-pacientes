@@ -15,7 +15,7 @@ const MainHeader = ({ showMenu, onMenuClick }) => {
           <button>Entrar</button>
         </Link>
       )}{" "}
-      {user?.institutionRoles[0]?.institution.name} • Meus Pacientes{" "}
+      <div>{user?.institutionRoles[0]?.institution.name} • <Link to="/configuracoes">{user?.name}</Link> • Meus Pacientes{" "}</div>
       {user?.id && <button onClick={logout}>Sair</button>}
     </Header>
   );

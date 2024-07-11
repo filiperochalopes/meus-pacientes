@@ -2,6 +2,7 @@ import React from "react";
 import Container from "./styles";
 import SimplePageLayout from "components/LYT_SimplePage";
 import { Link } from "react-router-dom";
+import Button from "components/Button";
 
 const Home = () => {
   return (
@@ -47,10 +48,11 @@ const Home = () => {
             precisa e quem quer usar da boa vontade do acolhimento para
             conseguir uma prescrição sem passar por uma consulta necessária.
           </li>
+          <li>Listas genéricas. Utilizo para listar meus pacientes que estão em protocolo de MRPA e acompanho por vias terceiiras, é disponiblizada API dessas listas que podem ser integradas a um typebot, por exemplo.</li>
         </ul>
         <center>
           <br />
-          <Link to="/login">Entrar no sistema</Link>
+          <Link to="/login"><Button>Entrar no Sistema</Button></Link>
           <br />
           <br />
         </center>

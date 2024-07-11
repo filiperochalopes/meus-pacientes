@@ -27,7 +27,7 @@ const logoutLink = onError(({ response }) => {
   if (
     response?.errors?.find((error) => error.message === "Signature has expired")
   ) {
-    localStorage.removeItem("token");
+    localStorage.removeItem("meuspacientes:token");
     window.location.href = "/";
   }
 });
