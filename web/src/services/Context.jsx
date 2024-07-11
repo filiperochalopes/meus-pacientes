@@ -8,13 +8,13 @@ import React, {
 import { ME } from "graphql/queries";
 import { Toast } from "primereact/toast";
 import { useCallback } from "react";
-import { useQuery } from "@apollo/client";
+import { useLazyQuery } from "@apollo/client";
 
 const Context = createContext({});
 
 const ContextProvider = ({ children }) => {
   const [user, setUser] = useState(null),
-    {data:userData, loading:userIsLoading, error} = useQuery(ME),
+    [getUser, { data: userData, loading: userIsLoading, error }] = useLazyQuery(ME),
     [token, setToken] = useState(null),
     toast = useRef(null);
 
@@ -27,23 +27,24 @@ const ContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    console.log("Loading page");
-    if (!userIsLoading && !userData?.id && !error) {
-      console.log(userIsLoading, userData, error);
-    }
+    getUser();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (userData) {
       setUser(userData.me);
     }
     if (error) {
       toastMessage({ summary: "Erro", detail: error.message });
     }
-  }, [userIsLoading, userData, error]);
+  }, [userData, error]);
 
   useEffect(() => {
-    // Caso exista token, verifica sua validação
-    if (token && user?.id) {
+    if (token) {
       // Cadastra o token em local Storage
       localStorage.setItem("meuspacientes:token", token);
+      getUser();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
