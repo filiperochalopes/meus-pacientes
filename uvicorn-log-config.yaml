@@ -1,0 +1,27 @@
+version: 1
+disable_existing_loggers: false
+
+formatters:
+  default:
+    format: "%(levelprefix)s %(asctime)s %(message)s"
+    datefmt: "%Y-%m-%d %H:%M:%S"
+
+handlers:
+  access:
+    class: logging.FileHandler
+    filename: /var/log/api/uvicorn-access.log
+    formatter: default
+  default:
+    class: logging.FileHandler
+    filename: /var/log/api/uvicorn-error.log
+    formatter: default
+
+loggers:
+  uvicorn.error:
+    level: DEBUG
+    handlers:
+      - default
+  uvicorn.access:
+    level: INFO
+    handlers:
+      - access

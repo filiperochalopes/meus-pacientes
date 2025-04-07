@@ -1,31 +1,38 @@
-version: "3"
 services:
-  app:
-    container_name: meus_pacientes_app
+  db-patients:
+    image: mariadb:11.7.2
     restart: always
-    build:
-      context: ./api
-      dockerfile: Dockerfile
-    volumes:
-      - ./api:/app
     environment:
-      - SECRET_KEY=${SECRET_KEY}
-      - MASTER_KEY=${MASTER_KEY}
-      - POSTGRES_HOST=${POSTGRES_HOST:?nome do host}
-      - POSTGRES_NAME=${POSTGRES_NAME:?nome do BD ausente}
-      - POSTGRES_USER=${POSTGRES_USER:?usuario do BD ausente}
-      - POSTGRES_PASS=${POSTGRES_PASS:?senha do BD ausente}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+    volumes:
+      - ./data:/var/lib/mysql
+    networks:
+      - patients
+      - cloudbeaver
+      - appsmith
+
+  api:
+    build: .
     ports:
       - "${API_PORT}:5000"
-  nginx:
-    container_name: meus_pacientes_nginx
-    restart: always
-    build:
-      context: .
-      dockerfile: Dockerfile.nginx
-    volumes:
-      - ./nginx.conf:/etc/nginx/conf.d/default.conf
-    ports:
-      - "${APP_PORT}:80"
+    environment:
+      DATABASE_URL: "mysql://${DB_USER}:${DB_PASS}@db-patients:3306/${DB_NAME}"
     depends_on:
-      - app
+      - db-patients
+    networks:
+      - patients
+      - appsmith
+
+networks:
+  patients:
+    name: patients
+    driver: bridge
+  appsmith:
+    name: appsmith-network
+    external: true
+  cloudbeaver:
+    name: cloudbeaver
+    external: true

@@ -1,0 +1,88 @@
+generator client {
+  provider             = "prisma-client-py"
+  interface            = "sync"
+  recursive_type_depth = 5
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Patient {
+  id        Int       @id @default(autoincrement()) // Referência ao BaseModel
+  name      String
+  gender    String
+  birthDate DateTime @db.Date @map("birth_date")
+  createdAt DateTime  @default(now()) @map("created_at") // Referência ao BaseModel
+  updatedAt DateTime  @updatedAt @map("updated_at") // Referência ao BaseModel
+
+  // Relacionamentos
+  telecom      ContactPoint[]
+  identifier   Identifier[]
+  appointments Appointment[]
+
+  @@map("patient")
+}
+
+model Contact {
+  id           Int    @id @default(autoincrement()) // Referência ao BaseModel
+  name         String
+  relationship String // e.g. "parent", "guardian", "emergency", "mother"
+
+  @@map("contact")
+}
+
+model ContactPoint {
+  id        Int      @id @default(autoincrement()) // Referência ao BaseModel
+  system    String // phone | fax | email | pager | url | sms | other
+  value     String   @unique
+  createdAt DateTime @default(now()) @map("created_at") // Referência ao BaseModel
+  updatedAt DateTime @updatedAt @map("updated_at") // Referência ao BaseModel
+
+  // Relacionamento
+  patientId Int? @map("patient_id")
+  patient   Patient? @relation(fields: [patientId], references: [id])
+
+  @@map("contact_point")
+}
+
+model Identifier {
+  id        Int      @id @default(autoincrement()) // Referência ao BaseModel
+  system    String // e.g. "SSN", "MRN", "NHS"
+  value     String   @unique
+  createdAt DateTime @default(now()) @map("created_at") // Referência ao BaseModel
+  updatedAt DateTime @updatedAt @map("updated_at") // Referência ao BaseModel
+
+  // Relacionamento
+  patientId Int? @map("patient_id")
+  patient   Patient? @relation(fields: [patientId], references: [id])
+
+  @@map("identifier")
+}
+
+model Appointment {
+  id               Int      @id @default(autoincrement()) // Referência ao BaseModel
+  patientId        Int @map("patient_id")
+  start            DateTime
+  end              DateTime
+  status           String // e.g. proposed | pending | booked | arrived | fulfilled | cancelled | noshow | entered-in-error | checked-in | waitlist
+  appointmentType  String @map("appointment_type") // e.g. "routine", "walkin", "checkup", "followup", "emergency"
+  createdAt        DateTime @default(now()) @map("created_at") // Referência ao BaseModel
+  updatedAt        DateTime @updatedAt @map("updated_at") // Referência ao BaseModel
+
+  // Relacionamento
+  patient Patient @relation(fields: [patientId], references: [id])
+
+  @@map("appointment")
+}
+
+model GeneralSetting {
+  id        Int      @id @default(autoincrement()) // Referência ao BaseModel
+  property  String // e.g. APIKey
+  value     String
+  createdAt DateTime @default(now()) @map("created_at") // Referência ao BaseModel
+  updatedAt DateTime @updatedAt @map("updated_at") // Referência ao BaseModel
+
+  @@map("general_setting")
+}

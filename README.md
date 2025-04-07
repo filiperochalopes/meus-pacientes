@@ -1,8 +1,10 @@
 # Meus Pacientes
 
-Uma aplicação para facilitar o gerenciamento de grupos na Atenção Básica. Sempre notei que as unidades de saúde que querem se organizar não conseguem suporte nos serviços fornecidos pelo SUS para as coisas mais simples.
+Esse projeto mudou um pouco de rumos nos últimos meses, tendo em vista o desenvolvimento de relatórios mais precisos do PEC e o desenvolvimento do Painel, mais recentemente, tentando dar mais controle ao gestor da ponta. A versão anterior e inacabada pode ser acessível sempre na branch `release/v1`. 
 
-Sem falar que a reponsividade desses sistemas não são boas e não atendem a demandas específicas, com esse ituito criei esse programa para gerenciar nossos pacientes, grupos, renovação de prescrições, dentre outros.
+Apesar desses esforços, receio que ainda temos muitas lacunas restantes e passando pelo Brasil pude notar que muitas pessoas se valem de planilhas para controle de seus pacientes. Dessa formaesse projeto se tornou um conjunto de dados mínimos estruturadospara interoperabilidade na atenção básica e, em vez de trabalhar com aplicação completa, se tornou uma **API** apenas para documentação, com a possibilidade e criar produtos que integram nelecomo typebot, appsmith, dentre outros.
+
+Talvez eu possa adicionar alguns produtos de minha autoria aqui dessas plataformas opensource que integram com a API em questão.
 
 ## Ambiente de desenvolvimento, configurações iniciais
 
