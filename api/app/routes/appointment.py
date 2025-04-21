@@ -5,11 +5,11 @@ from app.serializers import AppointmentCreate
 
 appointment_tag = Tag(name="Appointment", description="Agendamentos de pacientes")
 
-appointment_bp = APIBlueprint("Appointment", __name__, url_prefix="/appointments", abp_tags=[appointment_tag])
+appointment_bp = APIBlueprint("Appointment", __name__, url_prefix="/appointment", abp_tags=[appointment_tag])
 
 @appointment_bp.post("/", security=[{"api_key": []}])
 @token_required
-async def create_appointment(body: AppointmentCreate) -> dict:
+def create_appointment(body: AppointmentCreate) -> dict:
     """
     Cria um novo agendamento de paciente.
 
@@ -20,6 +20,6 @@ async def create_appointment(body: AppointmentCreate) -> dict:
     """
     data = body.dict()
 
-    appointment = await db.appointment.create(data=data)
+    appointment = db.appointment.create(data=data)
 
-    return {"message": "Agendamento criado com sucesso", "appointment": appointment}
+    return {"message": "Agendamento criado com sucesso", "appointment": appointment.dict()}

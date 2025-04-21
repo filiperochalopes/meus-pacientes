@@ -17,6 +17,7 @@ class PatientCreate(BaseModel):
     name: str
     gender: str
     birthDate: str
+    contact: Optional[List[ContactInput]] = []
     telecom: Optional[List[TelecomInput]] = []
     identifier: Optional[List[IdentifierInput]] = []
 

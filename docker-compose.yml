@@ -20,7 +20,7 @@ services:
     ports:
       - "${API_PORT}:5000"
     environment:
-      DATABASE_URL: "mysql://${DB_USER}:${DB_PASS}@db-patients:3306/${DB_NAME}"
+      DATABASE_URL: "mysql://root:${DB_ROOT_PASS}@db-patients:3306/${DB_NAME}"
     volumes:
       - .:/app
     depends_on:

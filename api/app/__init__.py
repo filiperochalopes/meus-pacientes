@@ -1,4 +1,5 @@
 from flask_openapi3 import OpenAPI, Info
+from flask import g
 
 api_key_scheme = {"type": "apiKey", "name": "api_key", "in": "header"}
 security_schemes = {"api_key": api_key_scheme}
@@ -7,6 +8,16 @@ info = Info(title="Patient and Appointment API", version="1.0.0")
 
 app = OpenAPI(__name__, info=info, security_schemes=security_schemes)
 
+from app.env import db  # Prisma já importado
+
+@app.before_request
+def before_request():
+    db.connect()
+    g.db = db
+
+@app.teardown_request
+def teardown_request(exception):
+    db.disconnect()
 
 @app.get("/")
 async def hello():

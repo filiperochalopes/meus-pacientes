@@ -14,12 +14,12 @@ prisma generate
 echo "🛠️ Executando: prisma db push"
 prisma db push
 
-echo "🚀 Iniciando Uvicorn..."
-exec uvicorn asgi:asgi_app \
-  --host 0.0.0.0 \
-  --port 5000 \
+echo "🚀 Iniciando Gunicorn com reload..."
+exec gunicorn wsgi:app \
+  --bind 0.0.0.0:5000 \
+  --workers 2 \
+  --threads 4 \
   --reload \
   --log-level debug \
-  --access-log \
-  --use-colors \
-  --log-config ../uvicorn-log-config.yaml
+  --access-logfile - \
+  --error-logfile -

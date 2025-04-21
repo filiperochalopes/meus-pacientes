@@ -1,15 +1,15 @@
+from flask import g
 from flask_openapi3 import Tag, APIBlueprint
-from app.env import db
 from app.services.utils.decorators import token_required
 from app.serializers import PatientCreate
 
 patient_tag = Tag(name="Patient", description="Operações relacionadas a pacientes")
 
-patient_bp = APIBlueprint("Patient", __name__, url_prefix="/patients", abp_tags=[patient_tag])
+patient_bp = APIBlueprint("Patient", __name__, url_prefix="/patient", abp_tags=[patient_tag])
 
 @patient_bp.post("/", security=[{"api_key": []}])
 @token_required
-async def create_patient(body: PatientCreate):
+def create_patient(body: PatientCreate):
     """
     Creates a new patient record along with associated contact points and identifiers.
 
@@ -29,17 +29,18 @@ async def create_patient(body: PatientCreate):
     data = body.dict()
     telecom = data.pop("telecom", [])
     identifier = data.pop("identifier", [])
+    contacts = data.pop("contact", [])
 
-    # Criação do paciente
-    patient = await db.patient.create(data=data)
-    patient_id = patient["id"]
+    patient = g.db.patient.create(data=data)
+    patient_id = patient.id
 
-    # Criação de meios de contato
-    for contact in telecom:
-        await db.contactpoint.create(data={**contact, "patientId": patient_id})
+    for t in telecom:
+        g.db.contactpoint.create(data={**t, "patientId": patient_id})
 
-    # Criação de identificadores
-    for idf in identifier:
-        await db.identifier.create(data={**idf, "patientId": patient_id})
+    for i in identifier:
+        g.db.identifier.create(data={**i, "patientId": patient_id})
 
-    return {"message": "Paciente criado com sucesso", "patient": patient}
+    for c in contacts:
+        g.db.contact.create(data={**c, "patientId": patient_id})
+
+    return {"message": "Paciente criado com sucesso", "patient": patient.dict()}
