@@ -1,4 +1,8 @@
 import os
+from prisma import Prisma
+
+# Prisma async
+db = Prisma()
 
 # Dados de autenticação
 SECRET = os.getenv("SECRET_KEY")

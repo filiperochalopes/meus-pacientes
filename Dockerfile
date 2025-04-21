@@ -20,5 +20,12 @@ COPY . .
 # Expõe a porta que o Gunicorn usará
 EXPOSE 5000
 
-# Comando para iniciar a aplicação usando Gunicorn
-CMD ["gunicorn", "wsgi:app", "--bind", "0.0.0.0:5000", "--workers", "2"]
+RUN mkdir -p /var/log/api && chmod -R 777 /var/log/api
+
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+WORKDIR /app/api
+
+# Inicia o servidor com todas as opções desejadas
+CMD ["/entrypoint.sh"]

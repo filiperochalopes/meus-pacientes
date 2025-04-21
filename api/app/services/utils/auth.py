@@ -2,7 +2,6 @@ import jwt
 import bcrypt
 import datetime
 
-from app.models import User, db
 from app.env import SECRET, TOKEN_HOUR_EXPIRATION
 
 from validate_docbr import CPF, CNS

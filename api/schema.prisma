@@ -21,16 +21,12 @@ model Patient {
   telecom      ContactPoint[]
   identifier   Identifier[]
   appointments Appointment[]
-
-  @@map("patient")
 }
 
 model Contact {
   id           Int    @id @default(autoincrement()) // Referência ao BaseModel
   name         String
   relationship String // e.g. "parent", "guardian", "emergency", "mother"
-
-  @@map("contact")
 }
 
 model ContactPoint {
@@ -43,8 +39,6 @@ model ContactPoint {
   // Relacionamento
   patientId Int? @map("patient_id")
   patient   Patient? @relation(fields: [patientId], references: [id])
-
-  @@map("contact_point")
 }
 
 model Identifier {
@@ -57,8 +51,6 @@ model Identifier {
   // Relacionamento
   patientId Int? @map("patient_id")
   patient   Patient? @relation(fields: [patientId], references: [id])
-
-  @@map("identifier")
 }
 
 model Appointment {
@@ -73,8 +65,6 @@ model Appointment {
 
   // Relacionamento
   patient Patient @relation(fields: [patientId], references: [id])
-
-  @@map("appointment")
 }
 
 model GeneralSetting {
@@ -83,6 +73,4 @@ model GeneralSetting {
   value     String
   createdAt DateTime @default(now()) @map("created_at") // Referência ao BaseModel
   updatedAt DateTime @updatedAt @map("updated_at") // Referência ao BaseModel
-
-  @@map("general_setting")
 }
