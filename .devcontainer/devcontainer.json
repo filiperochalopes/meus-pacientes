@@ -1,50 +1,54 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/postgres
+// README at: https://github.com/devcontainers/templates/tree/main/src/docker-existing-docker-compose
 {
-    "name": "Python 3 & NodeJs",
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "app",
-    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-    "features": {
-      "ghcr.io/devcontainers/features/git:1": {},
-      "ghcr.io/devcontainers/features/node:1": {},
-      "ghcr.io/devcontainers-contrib/features/prettier:1": {}
-    },
-  
-    // Features to add to the dev container. More info: https://containers.dev/features.
-    // "features": {},
-  
-    // Use 'forwardPorts' to make a list of ports inside the container available locally.
-    // This can be used to "network with other containers or the host.
-    "forwardPorts": [5000, 3000, 80],
-  
-    // Use 'postCreateCommand' to run commands after the container is created.
-    "postCreateCommand": "bash ./.devcontainer/postCreateCommand.sh",
-  
-    "remoteEnv": {
-      "FLASK_APP": "/workspaces/atencaobasica.filipelopes.med.br/api/app/__init__.py",
-      "PYTHONUNBUFFERED":"TRUE",
-      "REACT_APP_API_URL": "/api/v1"
-    },
-  
-    // Configure tool-specific properties.
-    "customizations": {
-      "vscode": {
-        "extensions": [
-          "ms-python.python",
-          "vscode.vscode-typescript-next",
-          "esbenp.prettier-vscode",
-          "mohd-akram.vscode-html-format",
-          "styled-components.vscode-styled-components",
-          "graphql.vscode-graphql",
-          "ms-azuretools.vscode-docker",
-          "codeium.codeium",
-          "ms-python.autopep8"
-        ]
-      }
-    },
-  
-    // Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-    "remoteUser": "root"
-  }
-  
+	"name": "Existing Docker Compose (Extend)",
+
+	// Update the 'dockerComposeFile' list if you have more compose files or use different names.
+	// The .devcontainer/docker-compose.yml file contains any overrides you need/want to make.
+	"dockerComposeFile": [
+		"../docker-compose.yml",
+		"docker-compose.yml"
+	],
+
+	// The 'service' property is the name of the service for the container that VS Code should
+	// use. Update this value and .devcontainer/docker-compose.yml to the real service name.
+	"service": "api",
+
+	// The optional 'workspaceFolder' property is the path VS Code should open by default when
+	// connected. This is typically a file mount in .devcontainer/docker-compose.yml
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/devcontainers-extra/features/ruff:1": {}
+	},
+
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [ 5000 ],
+
+	// Uncomment the next line if you want start specific services in your Docker Compose config.
+	// "runServices": [],
+
+	// Uncomment the next line if you want to keep your containers running after VS Code shuts down.
+	// "shutdownAction": "none",
+
+	// Uncomment the next line to run commands after the container is created.
+	"postCreateCommand": "chmod +x .devcontainer/postCreateCommand.sh && .devcontainer/postCreateCommand.sh",
+
+	"postStartCommand": "chmod +x .devcontainer/postStartCommand.sh && .devcontainer/postStartCommand.sh",
+
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"charliermarsh.ruff",
+				"prisma.prisma"
+			]
+		}
+	}
+
+	// Uncomment to connect as an existing user other than the container default. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "devcontainer"
+}

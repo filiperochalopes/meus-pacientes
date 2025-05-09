@@ -1,5 +1,0 @@
-{
-  alembicVersion{
-    version
-  }
-}
